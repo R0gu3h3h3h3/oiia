@@ -121,6 +121,7 @@ body a.channel-owner {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 1.2vh;
 }
 
 .feed-menu-item {
@@ -614,7 +615,7 @@ span > select {
 }
 
 body.dark-theme {
-  background-color: rgba(35, 35, 35, 1);
+  background-color: rgba(18, 18, 18, 1);
   color: #f0f0f0;
 }
 
@@ -668,7 +669,7 @@ body.dark-theme {
   }
 
   body.no-theme {
-    background-color: rgba(35, 35, 35, 1);
+    background-color: rgba(18, 18, 18, 1);
     color: #f0f0f0;
   }
 

@@ -42,7 +42,6 @@ module Invidious::Routes::VideoPlayback
       headers["Range"] = "bytes=#{range_for_head}"
     end
 
-		headers["Alt-Used"] = host
 		headers["Origin"] = "https://www.youtube.com"
 		headers["Referer"] = "https://www.youtube.com/"
 		headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"

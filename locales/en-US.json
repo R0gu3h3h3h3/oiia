@@ -163,6 +163,7 @@
     "unsubscribe": "unsubscribe",
     "revoke": "revoke",
     "Subscriptions": "Subscriptions",
+    "History": "History",
     "subscriptions_unseen_notifs_count": "{{count}} unseen notification",
     "subscriptions_unseen_notifs_count_plural": "{{count}} unseen notifications",
     "search": "search",

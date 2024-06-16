@@ -77,8 +77,8 @@ def make_client(url : URI, region = nil, force_resolve : Bool = false)
   return client
 end
 
-def make_client(url : URI, region = nil, force_resolve : Bool = false, &)
-  client = make_client(url, region, force_resolve)
+def make_client(url : URI, region = nil, force_resolve : Bool = false, &block)
+  client = make_client(url, region, force_resolve: force_resolve)
   begin
     yield client
   ensure

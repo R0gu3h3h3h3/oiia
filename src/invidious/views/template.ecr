@@ -104,6 +104,15 @@
 					</div>
 				</div>
 
+				<% if CONFIG.backends %>
+				<div class="h-box">
+					Change backend:
+					<% CONFIG.backends.each do | backend | %>
+						<a href="/switchbackend?backend_id=<%= backend %>">Backend<%= backend %></a>
+                    <% end %>
+				</div>
+				<% end %>
+
 				<% if CONFIG.banner %>
 					<div class="h-box">
 						<h3><%= CONFIG.banner %></h3>

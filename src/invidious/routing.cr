@@ -21,6 +21,7 @@ module Invidious::Routing
       get "/privacy", Routes::Misc, :privacy
       get "/licenses", Routes::Misc, :licenses
       get "/redirect", Routes::Misc, :cross_instance_redirect
+      get "/switchbackend", Routes::BackendSwitcher, :switch
 
       self.register_channel_routes
       self.register_watch_routes

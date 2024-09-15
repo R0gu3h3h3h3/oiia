@@ -167,6 +167,9 @@ class Config
   # The max resolution the Instance can offer
   property max_dash_resolution : Int32?
 
+  # List of names of the backends
+  property backends : Array(String) = [] of String
+
   # Materialious redirects
   property materialious_domain : String?
 

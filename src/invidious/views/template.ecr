@@ -106,9 +106,11 @@
 
 				<% if CONFIG.backends %>
 				<div class="h-box">
-					Change backend:
+					<b>Switch Backend:</b>
 					<% CONFIG.backends.each do | backend | %>
-						<a href="/switchbackend?backend_id=<%= backend %>">Backend<%= backend %></a>
+						<a href="/switchbackend?backend_id=<%= backend %>">
+							Backend<%= HTML.escape(backend) %>
+						</a> | 
                     <% end %>
 				</div>
 				<% end %>

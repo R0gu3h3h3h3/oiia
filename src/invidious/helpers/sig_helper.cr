@@ -175,7 +175,6 @@ module Invidious::SigHelper
     @queue = {} of TransactionID => Transaction
 
     @conn : Connection
-
     @uri_or_path : String
 
     def initialize(@uri_or_path)
@@ -201,7 +200,7 @@ module Invidious::SigHelper
                 @conn = Connection.new(@uri_or_path)
                 LOGGER.info("SigHelper: Reconnected to SigHelper!")
               rescue ex
-                LOGGER.debug("SigHelper: Reconnection to helper unsuccessful with error '#{ex.message}' retrying")
+                LOGGER.debug("SigHelper: Reconnection to helper unsuccessful with error '#{ex.message}'. Retrying")
                 sleep 500.milliseconds
                 next
               end

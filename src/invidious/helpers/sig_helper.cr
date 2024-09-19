@@ -192,16 +192,18 @@ module Invidious::SigHelper
         loop do
           begin
             receive_data
-          rescue ex : IO::EOFError
-            LOGGER.info("Connection to helper died, trying to reconnect...")
+            # Handle all errors
+          rescue ex
+            LOGGER.info("Connection to helper died with '#{ex.message}' trying to reconnect...")
             # We close the socket because for some reason is not closed.
             @conn.close
             loop do
               begin
                 @conn = Connection.new(@uri_or_path)
-              rescue
-                LOGGER.debug("Reconnection to helper unsuccessful, retrying.")
-                sleep 1
+                LOGGER.info("Reconnected to SigHelper!")
+              rescue ex
+                LOGGER.debug("Reconnection to helper unsuccessful with error '#{ex.message}' retrying")
+                sleep 0.5
                 next
               end
               break if !@conn.closed?
@@ -321,6 +323,11 @@ module Invidious::SigHelper
 
     def closed? : Bool
       return @socket.closed?
+    end
+
+    def remote_address : Socket::IPAddress
+
+      return @socket.remote_address
     end
 
     def close : Nil

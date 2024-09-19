@@ -194,15 +194,15 @@ module Invidious::SigHelper
             receive_data
             # Handle all errors
           rescue ex
-            LOGGER.info("Connection to helper died with '#{ex.message}' trying to reconnect...")
+            LOGGER.info("SigHelper: Connection to helper died with '#{ex.message}' trying to reconnect...")
             # We close the socket because for some reason is not closed.
             @conn.close
             loop do
               begin
                 @conn = Connection.new(@uri_or_path)
-                LOGGER.info("Reconnected to SigHelper!")
+                LOGGER.info("SigHelper: Reconnected to SigHelper!")
               rescue ex
-                LOGGER.debug("Reconnection to helper unsuccessful with error '#{ex.message}' retrying")
+                LOGGER.debug("SigHelper: Reconnection to helper unsuccessful with error '#{ex.message}' retrying")
                 sleep 0.5
                 next
               end

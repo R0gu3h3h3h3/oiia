@@ -28,6 +28,12 @@ module Invidious::Routes::BeforeAll
       extra_media_csp = ""
     end
 
+    if CONFIG.external_videoplayback_proxy
+      external_videoplayback_proxy = " #{CONFIG.external_videoplayback_proxy}"
+    else
+      external_videoplayback_proxy = ""
+    end
+
     # Only allow the pages at /embed/* to be embedded
     if env.request.resource.starts_with?("/embed")
       frame_ancestors = "'self' file: http: https:"
@@ -43,7 +49,7 @@ module Invidious::Routes::BeforeAll
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "font-src 'self' data:",
-      "connect-src 'self'",
+      "connect-src 'self'" + external_videoplayback_proxy,
       "manifest-src 'self'",
       "media-src 'self' blob:" + extra_media_csp,
       "child-src 'self' blob:",

@@ -35,7 +35,11 @@ module Invidious::Routes::API::Manifest
 
         if local
           uri = URI.parse(url)
-          url = "#{HOST_URL}#{uri.request_target}host/#{uri.host}/"
+          if CONFIG.external_videoplayback_proxy
+            url = "#{CONFIG.external_videoplayback_proxy}#{uri.request_target}host/#{uri.host}/"
+          else
+            url = "#{HOST_URL}#{uri.request_target}host/#{uri.host}/"
+          end
         end
 
         "<BaseURL>#{url}</BaseURL>"
@@ -48,20 +52,23 @@ module Invidious::Routes::API::Manifest
 
     if local
       adaptive_fmts.each do |fmt|
-        fmt["url"] = JSON::Any.new("#{HOST_URL}#{URI.parse(fmt["url"].as_s).request_target}")
+        if CONFIG.external_videoplayback_proxy
+          fmt["url"] = JSON::Any.new("#{CONFIG.external_videoplayback_proxy}#{URI.parse(fmt["url"].as_s).request_target}")
+        else
+          fmt["url"] = JSON::Any.new("#{HOST_URL}#{URI.parse(fmt["url"].as_s).request_target}")
+        end
       end
     end
 
     audio_streams = video.audio_streams.sort_by { |stream| {stream["bitrate"].as_i} }.reverse!
     video_streams = video.video_streams.sort_by { |stream| {stream["width"].as_i, stream["fps"].as_i} }.reverse!
 
-	# Removes all the resolutions with a height higher than CONFIG.max_dash_resolution
+    # Removes all the resolutions with a height higher than CONFIG.max_dash_resolution
     if CONFIG.max_dash_resolution
       video_streams.reject! do |z|
         (z["height"].as_i > CONFIG.max_dash_resolution.not_nil!) if z["height"]?
       end
     end
-
 
     manifest = XML.build(indent: "  ", encoding: "UTF-8") do |xml|
       xml.element("MPD", "xmlns": "urn:mpeg:dash:schema:mpd:2011",

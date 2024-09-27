@@ -188,6 +188,10 @@ Invidious::Jobs.register Invidious::Jobs::ClearExpiredItemsJob.new
 
 Invidious::Jobs.register Invidious::Jobs::InstanceListRefreshJob.new
 
+if CONFIG.external_videoplayback_proxy
+  Invidious::Jobs.register Invidious::Jobs::CheckExternalProxy.new
+end
+
 Invidious::Jobs.start_all
 
 def popular_videos

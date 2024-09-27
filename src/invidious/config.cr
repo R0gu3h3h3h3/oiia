@@ -172,6 +172,8 @@ class Config
   # List of names of the backends
   property backends : Array(String) = [] of String
 
+  property external_videoplayback_proxy : String?
+
   # Materialious redirects
   property materialious_domain : String?
 

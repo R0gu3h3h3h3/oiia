@@ -1,6 +1,7 @@
 <%
 	locale = env.get("preferences").as(Preferences).locale
 	dark_mode = env.get("preferences").as(Preferences).dark_mode
+	current_backend = env.request.cookies["SERVER_ID"]?.try &.value
 %>
 <!DOCTYPE html>
 <html lang="<%= locale %>">
@@ -104,13 +105,26 @@
 					</div>
 				</div>
 
-				<% if CONFIG.backends %>
+				<% if !CONFIG.backends.empty? %>
 				<div class="h-box">
 					<b>Switch Backend:</b>
 					<% CONFIG.backends.each do | backend | %>
-						<a href="/switchbackend?backend_id=<%= backend %>">
-							Backend<%= HTML.escape(backend) %>
-						</a> | 
+					<% backend = backend.split(CONFIG.backends_delimiter) %>
+					<% if current_backend == backend[0] %>
+						<a href="/switchbackend?backend_id=<%= backend[0] %>" style="text-decoration-line: underline; display: inline-block;">
+							Backend<%= HTML.escape(backend[0]) %>
+					<% if backend.size == 2 %>
+							<%= HTML.escape(backend[1]) %>
+                    <% end %>
+						</a> <span> | </span>
+                    <% else %>
+						<a href="/switchbackend?backend_id=<%= backend[0] %>" style="display: inline-block;">
+							Backend<%= HTML.escape(backend[0]) %>
+					<% if backend.size == 2 %>
+							<%= HTML.escape(backend[1]) %>
+                    <% end %>
+						</a> <span> | </span>
+                    <% end %>
                     <% end %>
 				</div>
 				<% end %>
@@ -296,6 +310,7 @@
             </div>
             <hr/>
             <div class="footer-footer">
+			<div class="box">You are currently using Backend: <%= current_backend %></p>
                 <span class="left">
                     <% if CONFIG.modified_source_code_url %>
                         <%= translate(locale, "footer_current_version_modified") %>

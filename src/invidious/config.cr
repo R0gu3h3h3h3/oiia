@@ -171,6 +171,9 @@ class Config
 
   # List of names of the backends
   property backends : Array(String) = [] of String
+  # Character used to separate the backend number from the description/note
+  # of the backend
+  property backends_delimiter : String = "|"
 
   property external_videoplayback_proxy : String?
 

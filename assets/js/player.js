@@ -51,8 +51,8 @@ videojs.Vhs.xhr.beforeRequest = function(options) {
     return options;
 };
 
-videojs.Vhs.GOAL_BUFFER_LENGTH = 20;
-videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 30;
+videojs.Vhs.GOAL_BUFFER_LENGTH = 40;
+videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 80;
 
 var player = videojs('player', options);
 

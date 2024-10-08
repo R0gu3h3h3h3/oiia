@@ -235,7 +235,7 @@ http_proxy:
 
 ##
 ## Enables colors in logs. Useful for debugging purposes
-## This is overridden if "-k" or "--colorize" 
+## This is overridden if "-k" or "--colorize"
 ## are passed on the command line.
 ## Colors are also disabled if the environment variable
 ## NO_COLOR is present and has any value

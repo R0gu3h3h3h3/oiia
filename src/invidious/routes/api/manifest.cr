@@ -1,15 +1,4 @@
 module Invidious::Routes::API::Manifest
-  @@proxy_alive : Bool = false
-
-  def self.check_external_proxy
-    begin
-      response = HTTP::Client.get("#{CONFIG.external_videoplayback_proxy}")
-      @@proxy_alive = response.status_code == 200
-    rescue
-      @@proxy_alive = false
-    end
-  end
-
   # /api/manifest/dash/id/:id
   def self.get_dash_video_id(env)
     env.response.headers.add("Access-Control-Allow-Origin", "*")
@@ -38,36 +27,21 @@ module Invidious::Routes::API::Manifest
         haltf env, status_code: response.status_code
       end
 
-      manifest = response.body
-
-      manifest = manifest.gsub(/<BaseURL>[^<]+<\/BaseURL>/) do |baseurl|
-        url = baseurl.lchop("<BaseURL>")
-        url = url.rchop("</BaseURL>")
-
-        if local
-          uri = URI.parse(url)
-          if @@proxy_alive
-            url = "#{CONFIG.external_videoplayback_proxy}#{uri.request_target}host/#{uri.host}/"
-          else
-            url = "#{HOST_URL}#{uri.request_target}host/#{uri.host}/"
-          end
-        end
-
+      # Proxy URLs for video playback on invidious.
+      # Other API clients can get the original URLs by omiting `local=true`.
+      manifest = response.body.gsub(/<BaseURL>[^<]+<\/BaseURL>/) do |baseurl|
+        url = baseurl.lchop("<BaseURL>").rchop("</BaseURL>")
+        url = HttpServer::Utils.proxy_video_url(url, absolute: true) if local
         "<BaseURL>#{url}</BaseURL>"
       end
 
       return manifest
     end
 
-    adaptive_fmts = video.adaptive_fmts
-
+    # Ditto, only proxify URLs if `local=true` is used
     if local
-      adaptive_fmts.each do |fmt|
-        if @@proxy_alive
-          fmt["url"] = JSON::Any.new("#{CONFIG.external_videoplayback_proxy}#{URI.parse(fmt["url"].as_s).request_target}")
-        else
-          fmt["url"] = JSON::Any.new("#{HOST_URL}#{URI.parse(fmt["url"].as_s).request_target}")
-        end
+      video.adaptive_fmts.each do |fmt|
+        fmt["url"] = JSON::Any.new(HttpServer::Utils.proxy_video_url(fmt["url"].as_s, absolute: true))
       end
     end
 
@@ -203,8 +177,9 @@ module Invidious::Routes::API::Manifest
     manifest = response.body
 
     if local
-      manifest = manifest.gsub(/^https:\/\/\w+---.{11}\.c\.youtube\.com[^\n]*/m) do |match|
-        path = URI.parse(match).path
+      manifest = manifest.gsub(/^https:\/\/[^\n"]*/m) do |match|
+        uri = URI.parse(match)
+        path = uri.path
 
         path = path.lchop("/videoplayback/")
         path = path.rchop("/")
@@ -233,7 +208,7 @@ module Invidious::Routes::API::Manifest
           raw_params["fvip"] = fvip["fvip"]
         end
 
-        raw_params["local"] = "true"
+        raw_params["host"] = uri.host.not_nil!
 
         "#{HOST_URL}/videoplayback?#{raw_params}"
       end

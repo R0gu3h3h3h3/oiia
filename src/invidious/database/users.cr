@@ -154,15 +154,17 @@ module Invidious::Database::Users
   #  Update (misc)
   # -------------------
 
-  def feed_needs_update(video : ChannelVideo)
-    request = <<-SQL
-      UPDATE users
-      SET feed_needs_update = true
-      WHERE $1 = ANY(subscriptions)
-    SQL
+  # Feeds never need update. PubSubHubBub is the one that sends videos to
+  # invidious.
+  #   def feed_needs_update(video : ChannelVideo)
+  #     request = <<-SQL
+  #       UPDATE users
+  #       SET feed_needs_update = true
+  #       WHERE $1 = ANY(subscriptions)
+  #     SQL
 
-    PG_DB.exec(request, video.ucid)
-  end
+  #     PG_DB.exec(request, video.ucid)
+  #   end
 
   def update_preferences(user : User)
     request = <<-SQL

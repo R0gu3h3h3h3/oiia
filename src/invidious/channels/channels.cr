@@ -251,8 +251,8 @@ def fetch_channel(ucid, pull_all_videos : Bool)
       LOGGER.trace("fetch_channel: #{ucid} : video #{video_id} : Inserted, updating subscriptions")
       if CONFIG.enable_user_notifications
         Invidious::Database::Users.add_notification(video)
-      else
-        Invidious::Database::Users.feed_needs_update(video)
+        #   else
+        #     Invidious::Database::Users.feed_needs_update(video)
       end
     else
       LOGGER.trace("fetch_channel: #{ucid} : video #{video_id} : Updated")
@@ -287,8 +287,8 @@ def fetch_channel(ucid, pull_all_videos : Bool)
           if was_insert
             if CONFIG.enable_user_notifications
               Invidious::Database::Users.add_notification(video)
-            else
-              Invidious::Database::Users.feed_needs_update(video)
+              # else
+              #   Invidious::Database::Users.feed_needs_update(video)
             end
           end
         end

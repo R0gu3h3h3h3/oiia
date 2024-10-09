@@ -450,8 +450,8 @@ module Invidious::Routes::Feeds
         if was_insert
           if CONFIG.enable_user_notifications
             Invidious::Database::Users.add_notification(video)
-          else
-            Invidious::Database::Users.feed_needs_update(video)
+            #   else
+            #     Invidious::Database::Users.feed_needs_update(video)
           end
         end
       end

@@ -4,6 +4,17 @@ module Invidious::HttpServer
   module Utils
     extend self
 
+    @@proxy_alive : Bool = false
+
+    def check_external_proxy
+      begin
+        response = HTTP::Client.get("#{CONFIG.external_videoplayback_proxy}")
+        @@proxy_alive = response.status_code == 200
+      rescue
+        @@proxy_alive = false
+      end
+    end
+
     def proxy_video_url(raw_url : String, *, region : String? = nil, absolute : Bool = false)
       url = URI.parse(raw_url)
 
@@ -14,7 +25,11 @@ module Invidious::HttpServer
       url.query_params = params
 
       if absolute
-        return "#{HOST_URL}#{url.request_target}"
+        if @@proxy_alive
+          return "#{CONFIG.external_videoplayback_proxy}#{url.request_target}"
+        else
+          return "#{HOST_URL}#{url.request_target}"
+        end
       else
         return url.request_target
       end

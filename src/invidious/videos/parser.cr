@@ -50,13 +50,22 @@ def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
   }
 end
 
-def extract_video_info(video_id : String)
+def extract_video_info(video_id : String, *, level = 0, client_type = YoutubeAPI::ClientType::WebMobile)
+  # Infinite recursion prevention
+  level += 1
+  if level >= 3
+      return {
+        "version" => JSON::Any.new(Video::SCHEMA_VERSION.to_i64),
+        "reason"  => JSON::Any.new("All counter-measures exhausted"),
+      }
+   end
+
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
+  client_config.client_type = client_type
 
   # Fetch data from the player endpoint
   player_response = YoutubeAPI.player(video_id: video_id, params: "2AMB", client_config: client_config)
-
   playability_status = player_response.dig?("playabilityStatus", "status").try &.as_s
 
   if playability_status != "OK"
@@ -65,10 +74,12 @@ def extract_video_info(video_id : String)
     reason ||= subreason.try &.[]("runs").as_a.map(&.[]("text")).join("")
     reason ||= player_response.dig("playabilityStatus", "reason").as_s
 
-    # Stop here if video is not a scheduled livestream or
-    # for LOGIN_REQUIRED when videoDetails element is not found because retrying won't help
-    if !{"LIVE_STREAM_OFFLINE", "LOGIN_REQUIRED"}.any?(playability_status) ||
+    if playability_status == "UNPLAYABLE" && reason.includes?("Get the YouTube app")
+      return extract_video_info(video_id: video_id, level: level, client_type: YoutubeAPI::ClientType::IOS)
+    elsif !{"LIVE_STREAM_OFFLINE", "LOGIN_REQUIRED"}.any?(playability_status) ||
        playability_status == "LOGIN_REQUIRED" && !player_response.dig?("videoDetails")
+      # Stop here if video is not a scheduled livestream or
+      # for LOGIN_REQUIRED when videoDetails element is not found because retrying won't help
       return {
         "version" => JSON::Any.new(Video::SCHEMA_VERSION.to_i64),
         "reason"  => JSON::Any.new(reason),
@@ -92,7 +103,7 @@ def extract_video_info(video_id : String)
   end
 
   # Don't fetch the next endpoint if the video is unavailable.
-  if {"OK", "LIVE_STREAM_OFFLINE", "LOGIN_REQUIRED"}.any?(playability_status)
+  if {"OK", "LIVE_STREAM_OFFLINE", "LOGIN_REQUIRED", "UNPLAYABLE"}.any?(playability_status)
     next_response = YoutubeAPI.next({"videoId": video_id, "params": ""})
     player_response = player_response.merge(next_response)
   end
@@ -102,22 +113,12 @@ def extract_video_info(video_id : String)
 
   new_player_response = nil
 
-  # Don't use Android client if po_token is passed because po_token doesn't
-  # work for Android client.
-  if reason.nil? && CONFIG.po_token.nil?
-    # Fetch the video streams using an Android client in order to get the
-    # decrypted URLs and maybe fix throttling issues (#2194). See the
-    # following issue for an explanation about decrypted URLs:
-    # https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
-    client_config.client_type = YoutubeAPI::ClientType::AndroidTestSuite
+  if reason || DECRYPT_FUNCTION.nil? || CONFIG.po_token.nil?
+    client_config.client_type = YoutubeAPI::ClientType::IOS
     new_player_response = try_fetch_streaming_data(video_id, client_config)
   end
 
-  # Last hope
-  # Only trigger if reason found and po_token or didn't work wth Android client.
-  # TvHtml5ScreenEmbed now requires sig helper for it to work but po_token is not required
-  # if the IP address is not blocked.
-  if CONFIG.po_token && reason || CONFIG.po_token.nil? && new_player_response.nil?
+  if reason && !DECRYPT_FUNCTION.nil? && CONFIG.po_token.nil?
     client_config.client_type = YoutubeAPI::ClientType::TvHtml5ScreenEmbed
     new_player_response = try_fetch_streaming_data(video_id, client_config)
   end
@@ -470,11 +471,15 @@ private def convert_url(fmt)
     params = url.query_params
   end
 
-  n = DECRYPT_FUNCTION.try &.decrypt_nsig(params["n"])
-  params["n"] = n if n
+  if old_n = params["n"]?
+    n = DECRYPT_FUNCTION.try &.decrypt_nsig(old_n)
+    params["n"] = n if n
+  end
 
   if token = CONFIG.po_token
-    params["pot"] = token
+    if {"WEB", "TVHTML5"}.any? { |x| params["c"].starts_with?(x) }
+      params["pot"] = token
+    end
   end
 
   url.query_params = params

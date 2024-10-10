@@ -67,11 +67,12 @@ REDIS_DB = Redis::PooledClient.new(unixsocket: CONFIG.redis_socket || nil, url: 
 if REDIS_DB.ping
   puts "Connected to redis"
 end
-ARCHIVE_URL = URI.parse("https://archive.org")
-PUBSUB_URL  = URI.parse("https://pubsubhubbub.appspot.com")
-REDDIT_URL  = URI.parse("https://www.reddit.com")
-YT_URL      = URI.parse("https://www.youtube.com")
-HOST_URL    = make_host_url(Kemal.config)
+ARCHIVE_URL     = URI.parse("https://archive.org")
+PUBSUB_URL      = URI.parse("https://pubsubhubbub.appspot.com")
+REDDIT_URL      = URI.parse("https://www.reddit.com")
+YT_URL          = URI.parse("https://www.youtube.com")
+HOST_URL        = make_host_url(Kemal.config)
+EXT_VIDEOP_LIST = gen_videoplayback_proxy_list()
 
 CHARS_SAFE         = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 TEST_IDS           = {"AgbeGFYluEA", "BaW_jenozKc", "a9LDPn-MO4I", "ddFvjfvPnqk", "iqKdEhx-dD4"}

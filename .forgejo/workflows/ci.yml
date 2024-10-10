@@ -34,8 +34,8 @@ jobs:
       with:
         images: git.nadeko.net/fijxu/invidious
         tags: |
-          type=sha,format=short,prefix={{date 'YYYY.MM.DD'}}-,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
-          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+          type=sha,format=short,prefix={{date 'YYYY.MM.DD'}}-experimental-,enable=${{ github.ref == format('refs/heads/{0}', 'experimental') }}
+          type=raw,value=latest-experimental,enable=${{ github.ref == format('refs/heads/{0}', 'experimental') }}
 
     - uses: https://code.forgejo.org/docker/build-push-action@v5
       name: Build images

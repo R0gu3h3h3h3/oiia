@@ -86,12 +86,6 @@ module Invidious::Routes::PreferencesRoute
     show_nick ||= "off"
     show_nick = show_nick == "on"
 
-    po_token = env.params.body["po_token"]?.try &.as(String)
-    po_token ||= CONFIG.default_user_preferences.po_token
-
-    visitor_data = env.params.body["visitor_data"]?.try &.as(String)
-    visitor_data ||= CONFIG.default_user_preferences.visitor_data
-
     comments = [] of String
     2.times do |i|
       comments << (env.params.body["comments[#{i}]"]?.try &.as(String) || CONFIG.default_user_preferences.comments[i])
@@ -186,8 +180,6 @@ module Invidious::Routes::PreferencesRoute
       vr_mode:                     vr_mode,
       show_nick:                   show_nick,
       save_player_pos:             save_player_pos,
-      po_token:                    po_token,
-      visitor_data:                visitor_data,
     }.to_json)
 
     if user = env.get? "user"

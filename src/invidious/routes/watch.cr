@@ -3,9 +3,6 @@
 module Invidious::Routes::Watch
   def self.handle(env)
     locale = env.get("preferences").as(Preferences).locale
-    user_po_token = env.get("preferences").as(Preferences).po_token
-    user_visitor_data = env.get("preferences").as(Preferences).visitor_data
-
     region = env.params.query["region"]?
 
     if env.params.query.to_s.includes?("%20") || env.params.query.to_s.includes?("+")
@@ -55,7 +52,7 @@ module Invidious::Routes::Watch
     env.params.query.delete_all("listen")
 
     begin
-      video = get_video(id, region: params.region, po_token: user_po_token, visitor_data: user_visitor_data)
+      video = get_video(id, region: params.region)
     rescue ex : NotFoundException
       LOGGER.error("get_video not found: #{id} : #{ex.message}")
       return error_template(404, ex)

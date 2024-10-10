@@ -57,10 +57,6 @@ struct Preferences
   property volume : Int32 = CONFIG.default_user_preferences.volume
   property save_player_pos : Bool = CONFIG.default_user_preferences.save_player_pos
 
-  @[YAML::Field(converter: Preferences::ProcessString)]
-  property po_token : String = ""
-  property visitor_data : String = ""
-
   module BoolToString
     def self.to_json(value : String, json : JSON::Builder)
       json.string value

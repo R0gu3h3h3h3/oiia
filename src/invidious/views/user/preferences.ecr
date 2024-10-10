@@ -126,6 +126,16 @@
                 <input name="save_player_pos" id="save_player_pos" type="checkbox" <% if preferences.save_player_pos %>checked<% end %>>
             </div>
 
+			<div class="pure-control-group">
+                <label for="po_token"><%= translate(locale, "preferences_po_token") %></label>
+                <input name="po_token" id="po_token" type="text" value="<%= preferences.po_token %>">
+            </div>
+
+			<div class="pure-control-group">
+                <label for="visitor_data"><%= translate(locale, "preferences_visitor_data") %></label>
+                <input name="visitor_data" id="visitor_data" type="text" value="<%= preferences.visitor_data %>">
+            </div>
+
             <legend><%= translate(locale, "preferences_category_visual") %></legend>
 
             <div class="pure-control-group">

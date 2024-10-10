@@ -45,6 +45,8 @@ struct ConfigPreferences
   property vr_mode : Bool = true
   property show_nick : Bool = true
   property save_player_pos : Bool = false
+  property po_token : String = ""
+  property visitor_data : String = ""
 
   def to_tuple
     {% begin %}
@@ -87,6 +89,8 @@ class Config
 
   # Used to tell Invidious it is behind a proxy, so links to resources should be https://
   property https_only : Bool?
+  # Enable or disable CSP
+  property csp : Bool? = true
   # HMAC signing key for CSRF tokens and verifying pubsub subscriptions
   property hmac_key : String = ""
   # Domain to be used for links to resources on the site where an absolute URL is required

@@ -42,9 +42,9 @@ module Invidious::Routes::VideoPlayback
       headers["Range"] = "bytes=#{range_for_head}"
     end
 
-		headers["Origin"] = "https://www.youtube.com"
-		headers["Referer"] = "https://www.youtube.com/"
-		headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
+    headers["Origin"] = "https://www.youtube.com"
+    headers["Referer"] = "https://www.youtube.com/"
+    headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
     client = make_client(URI.parse(host), region, force_resolve = true)
     response = HTTP::Client::Response.new(500)

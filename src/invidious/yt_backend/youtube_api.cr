@@ -198,6 +198,8 @@ module YoutubeAPI
     # (this is passed as the `gl` parameter).
     property region : String | Nil
 
+    @@visitor_data : String | Nil
+
     # Initialization function
     def initialize(
       *,
@@ -320,7 +322,9 @@ module YoutubeAPI
       client_context["client"]["platform"] = platform
     end
 
-    if CONFIG.visitor_data.is_a?(String)
+    if !@@visitor_data.not_nil!.empty?
+      client_context["client"]["visitorData"] = @@visitor_data.not_nil!
+    elsif CONFIG.visitor_data.is_a?(String)
       client_context["client"]["visitorData"] = CONFIG.visitor_data.as(String)
     end
 
@@ -455,8 +459,13 @@ module YoutubeAPI
     video_id : String,
     *, # Force the following parameters to be passed by name
     params : String,
-    client_config : ClientConfig | Nil = nil
+    client_config : ClientConfig | Nil = nil,
+    po_token : String,
+    visitor_data : String | Nil
   )
+    if visitor_data
+      @@visitor_data = visitor_data
+    end
     # Playback context, separate because it can be different between clients
     playback_ctx = {
       "html5Preference" => "HTML5_PREF_WANTS",
@@ -482,7 +491,7 @@ module YoutubeAPI
         "contentPlaybackContext" => playback_ctx,
       },
       "serviceIntegrityDimensions" => {
-        "poToken" => CONFIG.po_token,
+        "poToken" => po_token || CONFIG.po_token,
       },
     }
 
@@ -596,7 +605,7 @@ module YoutubeAPI
   def _post_json(
     endpoint : String,
     data : Hash,
-    client_config : ClientConfig | Nil
+    client_config : ClientConfig | Nil,
   ) : Hash(String, JSON::Any)
     # Use the default client config if nil is passed
     client_config ||= DEFAULT_CLIENT_CONFIG
@@ -616,7 +625,9 @@ module YoutubeAPI
       headers["User-Agent"] = user_agent
     end
 
-    if CONFIG.visitor_data.is_a?(String)
+    if !@@visitor_data.not_nil!.empty?
+      headers["X-Goog-Visitor-Id"] = @@visitor_data.not_nil!
+    elsif CONFIG.visitor_data.is_a?(String)
       headers["X-Goog-Visitor-Id"] = CONFIG.visitor_data.as(String)
     end
 

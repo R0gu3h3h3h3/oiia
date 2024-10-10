@@ -50,12 +50,12 @@ def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
   }
 end
 
-def extract_video_info(video_id : String)
+def extract_video_info(video_id : String, po_token, visitor_data)
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
 
   # Fetch data from the player endpoint
-  player_response = YoutubeAPI.player(video_id: video_id, params: "2AMB", client_config: client_config)
+  player_response = YoutubeAPI.player(video_id: video_id, params: "2AMB", client_config: client_config, po_token: po_token, visitor_data: visitor_data)
 
   playability_status = player_response.dig?("playabilityStatus", "status").try &.as_s
 
@@ -110,7 +110,7 @@ def extract_video_info(video_id : String)
     # following issue for an explanation about decrypted URLs:
     # https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
     client_config.client_type = YoutubeAPI::ClientType::AndroidTestSuite
-    new_player_response = try_fetch_streaming_data(video_id, client_config)
+    new_player_response = try_fetch_streaming_data(video_id, client_config, po_token, visitor_data)
   end
 
   # Last hope
@@ -119,7 +119,7 @@ def extract_video_info(video_id : String)
   # if the IP address is not blocked.
   if CONFIG.po_token && reason || CONFIG.po_token.nil? && new_player_response.nil?
     client_config.client_type = YoutubeAPI::ClientType::TvHtml5ScreenEmbed
-    new_player_response = try_fetch_streaming_data(video_id, client_config)
+    new_player_response = try_fetch_streaming_data(video_id, client_config, po_token, visitor_data)
   end
 
   # Replace player response and reset reason
@@ -140,7 +140,7 @@ def extract_video_info(video_id : String)
   if streaming_data = player_response["streamingData"]?
     %w[formats adaptiveFormats].each do |key|
       streaming_data.as_h[key]?.try &.as_a.each do |format|
-        format.as_h["url"] = JSON::Any.new(convert_url(format))
+        format.as_h["url"] = JSON::Any.new(convert_url(format, po_token))
       end
     end
 
@@ -153,9 +153,9 @@ def extract_video_info(video_id : String)
   return params
 end
 
-def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig) : Hash(String, JSON::Any)?
+def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig, po_token, visitor_data) : Hash(String, JSON::Any)?
   LOGGER.debug("try_fetch_streaming_data: [#{id}] Using #{client_config.client_type} client.")
-  response = YoutubeAPI.player(video_id: id, params: "2AMB", client_config: client_config)
+  response = YoutubeAPI.player(video_id: id, params: "2AMB", client_config: client_config, po_token: po_token, visitor_data: visitor_data)
 
   playability_status = response["playabilityStatus"]["status"]
   LOGGER.debug("try_fetch_streaming_data: [#{id}] Got playabilityStatus == #{playability_status}.")
@@ -455,7 +455,7 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
   return params
 end
 
-private def convert_url(fmt)
+private def convert_url(fmt, po_token)
   if cfr = fmt["signatureCipher"]?.try { |json| HTTP::Params.parse(json.as_s) }
     sp = cfr["sp"]
     url = URI.parse(cfr["url"])
@@ -473,7 +473,9 @@ private def convert_url(fmt)
   n = DECRYPT_FUNCTION.try &.decrypt_nsig(params["n"])
   params["n"] = n if n
 
-  if token = CONFIG.po_token
+  if !po_token.empty?
+    params["pot"] = po_token
+  elsif token = CONFIG.po_token
     params["pot"] = token
   end
 

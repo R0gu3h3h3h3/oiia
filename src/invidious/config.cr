@@ -180,7 +180,9 @@ class Config
   # of the backend
   property backends_delimiter : String = "|"
 
-  property external_videoplayback_proxy : String?
+  # External videoplayback proxies list. They should include `https://`
+  # at the start of the URI
+  property external_videoplayback_proxy : Array(String) = [] of String
 
   # Materialious redirects
   property materialious_domain : String?

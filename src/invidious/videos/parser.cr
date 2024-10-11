@@ -54,11 +54,11 @@ def extract_video_info(video_id : String, *, level = 0, client_type = YoutubeAPI
   # Infinite recursion prevention
   level += 1
   if level >= 3
-      return {
-        "version" => JSON::Any.new(Video::SCHEMA_VERSION.to_i64),
-        "reason"  => JSON::Any.new("All counter-measures exhausted"),
-      }
-   end
+    return {
+      "version" => JSON::Any.new(Video::SCHEMA_VERSION.to_i64),
+      "reason"  => JSON::Any.new("All counter-measures exhausted"),
+    }
+  end
 
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
@@ -74,7 +74,10 @@ def extract_video_info(video_id : String, *, level = 0, client_type = YoutubeAPI
     reason ||= subreason.try &.[]("runs").as_a.map(&.[]("text")).join("")
     reason ||= player_response.dig("playabilityStatus", "reason").as_s
 
-    if playability_status == "UNPLAYABLE" && reason.includes?("Get the YouTube app")
+    # Show the playability status in the reason message
+    reason = "#{reason} (#{playability_status})"
+
+    if (playability_status == "UNPLAYABLE" && reason.includes?("Get the YouTube app")) || reason.includes?("protect our community")
       return extract_video_info(video_id: video_id, level: level, client_type: YoutubeAPI::ClientType::IOS)
     elsif !{"LIVE_STREAM_OFFLINE", "LOGIN_REQUIRED"}.any?(playability_status) ||
        playability_status == "LOGIN_REQUIRED" && !player_response.dig?("videoDetails")

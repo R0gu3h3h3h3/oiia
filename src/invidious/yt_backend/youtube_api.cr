@@ -3,6 +3,8 @@
 #
 
 module YoutubeAPI
+  @@visitor_data : String = ""
+
   extend self
 
   # For Android versions, see https://en.wikipedia.org/wiki/Android_version_history
@@ -198,8 +200,6 @@ module YoutubeAPI
     # (this is passed as the `gl` parameter).
     property region : String | Nil
 
-    @@visitor_data : String | Nil
-
     # Initialization function
     def initialize(
       *,
@@ -322,8 +322,8 @@ module YoutubeAPI
       client_context["client"]["platform"] = platform
     end
 
-    if !@@visitor_data.not_nil!.empty?
-      client_context["client"]["visitorData"] = @@visitor_data.not_nil!
+    if !@@visitor_data.empty?
+      client_context["client"]["visitorData"] = @@visitor_data
     elsif CONFIG.visitor_data.is_a?(String)
       client_context["client"]["visitorData"] = CONFIG.visitor_data.as(String)
     end
@@ -461,7 +461,7 @@ module YoutubeAPI
     params : String,
     client_config : ClientConfig | Nil = nil,
     po_token : String,
-    visitor_data : String | Nil
+    visitor_data : String
   )
     if visitor_data
       @@visitor_data = visitor_data
@@ -625,8 +625,8 @@ module YoutubeAPI
       headers["User-Agent"] = user_agent
     end
 
-    if !@@visitor_data.not_nil!.empty?
-      headers["X-Goog-Visitor-Id"] = @@visitor_data.not_nil!
+    if !@@visitor_data.empty?
+      headers["X-Goog-Visitor-Id"] = @@visitor_data
     elsif CONFIG.visitor_data.is_a?(String)
       headers["X-Goog-Visitor-Id"] = CONFIG.visitor_data.as(String)
     end

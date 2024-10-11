@@ -50,7 +50,7 @@ def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
   }
 end
 
-def extract_video_info(video_id : String, *, level = 0, client_type = YoutubeAPI::ClientType::WebMobile)
+def extract_video_info(video_id : String, *, level = 0, client_type = YoutubeAPI::ClientType::WebMobileT2)
   # Infinite recursion prevention
   level += 1
   if level >= 3

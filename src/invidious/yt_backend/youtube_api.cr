@@ -17,7 +17,7 @@ module YoutubeAPI
   # For Apple device names, see https://gist.github.com/adamawolf/3048717
   # For iOS versions, see https://en.wikipedia.org/wiki/IOS_version_history#Releases,
   # then go to the dedicated article of the major version you want.
-  private IOS_APP_VERSION = "19.32.8"
+  private IOS_APP_VERSION = "19.40.4"
   private IOS_USER_AGENT  = "com.google.ios.youtube/#{IOS_APP_VERSION} (iPhone14,5; U; CPU iOS 17_6 like Mac OS X;)"
   private IOS_VERSION     = "17.6.1.21G93" # Major.Minor.Patch.Build
 
@@ -28,6 +28,7 @@ module YoutubeAPI
     Web
     WebEmbeddedPlayer
     WebMobile
+    WebMobileT2
     WebScreenEmbed
 
     Android
@@ -48,7 +49,7 @@ module YoutubeAPI
     ClientType::Web => {
       name:       "WEB",
       name_proto: "1",
-      version:    "2.20240814.00.00",
+      version:    "2.20241010.01.00",
       screen:     "WATCH_FULL_SCREEN",
       os_name:    "Windows",
       os_version: WINDOWS_VERSION,
@@ -66,9 +67,17 @@ module YoutubeAPI
     ClientType::WebMobile => {
       name:       "MWEB",
       name_proto: "2",
-      version:    "2.20240813.02.00",
+      version:    "2.20241010.02.00",
       os_name:    "Android",
       os_version: ANDROID_VERSION,
+      platform:   "MOBILE",
+    },
+    ClientType::WebMobileT2 => {
+      name:       "MWEB_TIER_2",
+      name_proto: "27",
+      version:    "9.20241010",
+      os_name:    "iPhone",
+      os_version: IOS_VERSION,
       platform:   "MOBILE",
     },
     ClientType::WebScreenEmbed => {

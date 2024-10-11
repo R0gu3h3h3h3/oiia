@@ -384,7 +384,7 @@ def parse_link_endpoint(endpoint : JSON::Any, text : String, video_id : String)
   return text
 end
 
-# Generates a list of external videoplayback proxies for
+# Generates a list of external videoplayback proxies for 
 # CSP
 def gen_videoplayback_proxy_list
   if !CONFIG.external_videoplayback_proxy.empty?

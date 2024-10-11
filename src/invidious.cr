@@ -189,7 +189,7 @@ Invidious::Jobs.register Invidious::Jobs::ClearExpiredItemsJob.new
 
 Invidious::Jobs.register Invidious::Jobs::InstanceListRefreshJob.new
 
-if CONFIG.external_videoplayback_proxy
+if !CONFIG.external_videoplayback_proxy.empty?
   Invidious::Jobs.register Invidious::Jobs::CheckExternalProxy.new
 end
 

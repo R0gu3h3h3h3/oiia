@@ -324,7 +324,7 @@ rescue DB::Error
 end
 
 def fetch_video(id, region, po_token, visitor_data)
-  info = extract_video_info(video_id: id, po_token: po_token, visitor_data: visitor_data)
+  info = extract_video_info(video_id: id, user_po_token: po_token, user_visitor_data: visitor_data)
 
   if reason = info["reason"]?
     if reason == "Video unavailable"

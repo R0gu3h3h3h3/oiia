@@ -460,8 +460,8 @@ module YoutubeAPI
     *, # Force the following parameters to be passed by name
     params : String,
     client_config : ClientConfig | Nil = nil,
-    po_token : String,
-    visitor_data : String
+    po_token : String | Nil,
+    visitor_data : String | Nil,
   )
     if visitor_data
       @@visitor_data = visitor_data

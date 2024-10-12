@@ -50,9 +50,15 @@ def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
   }
 end
 
-def extract_video_info(video_id : String, po_token, visitor_data)
+def extract_video_info(video_id : String, user_po_token, user_visitor_data)
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
+
+  redis_po_token = get_po_token()
+  redis_visitor_data = get_visitor_data()
+
+  po_token = (user_po_token if !user_po_token.empty?) || redis_po_token || CONFIG.po_token
+  visitor_data = (user_visitor_data if !user_visitor_data.empty?) || redis_visitor_data || CONFIG.visitor_data
 
   # Fetch data from the player endpoint
   player_response = YoutubeAPI.player(video_id: video_id, params: "2AMB", client_config: client_config, po_token: po_token, visitor_data: visitor_data)
@@ -104,7 +110,7 @@ def extract_video_info(video_id : String, po_token, visitor_data)
 
   # Don't use Android client if po_token is passed because po_token doesn't
   # work for Android client.
-  if reason.nil? && CONFIG.po_token.nil?
+  if reason.nil? && po_token.nil?
     # Fetch the video streams using an Android client in order to get the
     # decrypted URLs and maybe fix throttling issues (#2194). See the
     # following issue for an explanation about decrypted URLs:
@@ -117,7 +123,7 @@ def extract_video_info(video_id : String, po_token, visitor_data)
   # Only trigger if reason found and po_token or didn't work wth Android client.
   # TvHtml5ScreenEmbed now requires sig helper for it to work but po_token is not required
   # if the IP address is not blocked.
-  if CONFIG.po_token && reason || CONFIG.po_token.nil? && new_player_response.nil?
+  if po_token.nil? && reason || po_token.nil? && new_player_response.nil?
     client_config.client_type = YoutubeAPI::ClientType::TvHtml5ScreenEmbed
     new_player_response = try_fetch_streaming_data(video_id, client_config, po_token, visitor_data)
   end
@@ -473,7 +479,7 @@ private def convert_url(fmt, po_token)
   n = DECRYPT_FUNCTION.try &.decrypt_nsig(params["n"])
   params["n"] = n if n
 
-  if !po_token.empty?
+  if !po_token.nil?
     params["pot"] = po_token
   elsif token = CONFIG.po_token
     params["pot"] = token

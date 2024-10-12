@@ -10,8 +10,8 @@ module Invidious::Database::Videos
       ON CONFLICT (id) DO NOTHING
     SQL
 
-    REDIS_DB.set(video.id, video.info.to_json, ex: 3600)
-    REDIS_DB.set(video.id + ":time", video.updated, ex: 3600)
+    REDIS_DB.set(video.id, video.info.to_json, ex: 14400)
+    REDIS_DB.set(video.id + ":time", video.updated, ex: 14400)
   end
 
   def delete(id)

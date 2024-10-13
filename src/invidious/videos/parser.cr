@@ -54,8 +54,7 @@ def extract_video_info(video_id : String, user_po_token, user_visitor_data)
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
 
-  redis_po_token = get_po_token()
-  redis_visitor_data = get_visitor_data()
+  redis_po_token, redis_visitor_data = Tokens.get_tokens
 
   po_token = (user_po_token if !user_po_token.empty?) || redis_po_token || CONFIG.po_token
   visitor_data = (user_visitor_data if !user_visitor_data.empty?) || redis_visitor_data || CONFIG.visitor_data

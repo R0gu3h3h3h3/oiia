@@ -397,11 +397,3 @@ def gen_videoplayback_proxy_list
   end
   return external_videoplayback_proxy
 end
-
-def get_po_token
-	REDIS_DB.get("invidious:po_token")
-end
-
-def get_visitor_data
-	REDIS_DB.get("invidious:visitor_data")
-end

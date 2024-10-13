@@ -193,6 +193,10 @@ if !CONFIG.external_videoplayback_proxy.empty?
   Invidious::Jobs.register Invidious::Jobs::CheckExternalProxy.new
 end
 
+if CONFIG.refresh_tokens
+  Invidious::Jobs.register Invidious::Jobs::RefreshTokens.new
+end
+
 Invidious::Jobs.start_all
 
 def popular_videos

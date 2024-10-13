@@ -298,7 +298,16 @@ module Invidious::Routes::VideoPlayback
     end
 
     if local
-      url = URI.parse(url).request_target.not_nil!
+      external_proxy = Invidious::HttpServer::Utils.get_external_proxy
+      if !external_proxy.empty?
+        url = URI.parse(url)
+        external_proxy = URI.parse(external_proxy)
+        url.host = external_proxy.host
+        url.port = external_proxy.port
+        url = url.to_s
+      else
+        url = URI.parse(url).request_target.not_nil!
+      end
       url += "&title=#{URI.encode_www_form(title, space_to_plus: false)}" if title
     end
 

@@ -184,6 +184,9 @@ class Config
   # at the start of the URI
   property external_videoplayback_proxy : Array(String) = [] of String
 
+  # Job to refresh tokens from a Redis compatible DB
+  property refresh_tokens : Bool = true
+
   # Materialious redirects
   property materialious_domain : String?
 

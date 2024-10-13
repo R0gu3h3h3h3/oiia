@@ -21,6 +21,10 @@ module Invidious::HttpServer
       end
     end
 
+    def get_external_proxy
+      return @@proxy_alive
+    end
+
     def proxy_video_url(raw_url : String, *, region : String? = nil, absolute : Bool = false)
       url = URI.parse(raw_url)
 

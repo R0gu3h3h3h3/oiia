@@ -45,7 +45,7 @@ module Invidious::Routes::BeforeAll
       "font-src 'self' data:",
       "connect-src 'self'" + EXT_VIDEOP_LIST,
       "manifest-src 'self'",
-      "media-src 'self' blob:" + extra_media_csp,
+      "media-src 'self' blob:" + extra_media_csp + EXT_VIDEOP_LIST,
       "child-src 'self' blob:",
       "frame-src 'self'",
       "frame-ancestors " + frame_ancestors,

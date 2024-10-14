@@ -210,7 +210,13 @@ module Invidious::Routes::API::Manifest
 
         raw_params["host"] = uri.host.not_nil!
 
-        "#{HOST_URL}/videoplayback?#{raw_params}"
+        proxy = Invidious::HttpServer::Utils.get_external_proxy
+
+        if !proxy.empty?
+          "#{proxy}/videoplayback?#{raw_params}"
+        else
+          "#{HOST_URL}/videoplayback?#{raw_params}"
+        end
       end
     end
 

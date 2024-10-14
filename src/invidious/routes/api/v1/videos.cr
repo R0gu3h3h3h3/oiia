@@ -263,59 +263,60 @@ module Invidious::Routes::API::V1::Videos
 
     annotations = ""
 
-    case source
-    when "archive"
-      if CONFIG.cache_annotations && (cached_annotation = Invidious::Database::Annotations.select(id))
-        annotations = cached_annotation.annotations
-      else
-        index = CHARS_SAFE.index!(id[0]).to_s.rjust(2, '0')
+    # case source
+    # when "archive"
+    #   if CONFIG.cache_annotations && (cached_annotation = Invidious::Database::Annotations.select(id))
+    #     annotations = cached_annotation.annotations
+    #   else
+    #     index = CHARS_SAFE.index!(id[0]).to_s.rjust(2, '0')
 
-        # IA doesn't handle leading hyphens,
-        # so we use https://archive.org/details/youtubeannotations_64
-        if index == "62"
-          index = "64"
-          id = id.sub(/^-/, 'A')
-        end
+    #     # IA doesn't handle leading hyphens,
+    #     # so we use https://archive.org/details/youtubeannotations_64
+    #     if index == "62"
+    #       index = "64"
+    #       id = id.sub(/^-/, 'A')
+    #     end
 
-        file = URI.encode_www_form("#{id[0, 3]}/#{id}.xml")
+    #     file = URI.encode_www_form("#{id[0, 3]}/#{id}.xml")
 
-        location = make_client(ARCHIVE_URL, &.get("/download/youtubeannotations_#{index}/#{id[0, 2]}.tar/#{file}"))
+    #     location = make_client(ARCHIVE_URL, &.get("/download/youtubeannotations_#{index}/#{id[0, 2]}.tar/#{file}"))
 
-        if !location.headers["Location"]?
-          env.response.status_code = location.status_code
-        end
+    #     if !location.headers["Location"]?
+    #       env.response.status_code = location.status_code
+    #     end
 
-        response = make_client(URI.parse(location.headers["Location"]), &.get(location.headers["Location"]))
+    #     response = make_client(URI.parse(location.headers["Location"]), &.get(location.headers["Location"]))
 
-        if response.body.empty?
-          haltf env, 404
-        end
+    #     if response.body.empty?
+    #       haltf env, 404
+    #     end
 
-        if response.status_code != 200
-          haltf env, response.status_code
-        end
+    #     if response.status_code != 200
+    #       haltf env, response.status_code
+    #     end
 
-        annotations = response.body
+    #     annotations = response.body
 
-        cache_annotation(id, annotations)
-      end
-    else # "youtube"
-      response = YT_POOL.client &.get("/annotations_invideo?video_id=#{id}")
+    #     cache_annotation(id, annotations)
+    #   end
+    # else # "youtube"
+    #   response = YT_POOL.client &.get("/annotations_invideo?video_id=#{id}")
 
-      if response.status_code != 200
-        haltf env, response.status_code
-      end
+    #   if response.status_code != 200
+    #     haltf env, response.status_code
+    #   end
 
-      annotations = response.body
-    end
+    #   annotations = response.body
+    # end
 
-    etag = sha256(annotations)[0, 16]
-    if env.request.headers["If-None-Match"]?.try &.== etag
-      haltf env, 304
-    else
-      env.response.headers["ETag"] = etag
-      annotations
-    end
+    # etag = sha256(annotations)[0, 16]
+    # if env.request.headers["If-None-Match"]?.try &.== etag
+    #   haltf env, 304
+    # else
+    #   env.response.headers["ETag"] = etag
+    #   annotations
+    # end
+    annotations
   end
 
   def self.comments(env)

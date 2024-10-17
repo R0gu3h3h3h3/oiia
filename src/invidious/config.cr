@@ -187,6 +187,8 @@ class Config
   # Job to refresh tokens from a Redis compatible DB
   property refresh_tokens : Bool = true
 
+  property pubsub_domain : String = ""
+
   # Materialious redirects
   property materialious_domain : String?
 

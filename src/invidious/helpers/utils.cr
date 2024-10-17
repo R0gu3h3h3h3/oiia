@@ -294,7 +294,7 @@ def subscribe_pubsub(topic, key)
   signature = "#{time}:#{nonce}"
 
   body = {
-    "hub.callback"      => "#{HOST_URL}/feed/webhook/v1:#{time}:#{nonce}:#{OpenSSL::HMAC.hexdigest(:sha1, key, signature)}",
+    "hub.callback"      => "#{PUBSUB_HOST_URL}/feed/webhook/v1:#{time}:#{nonce}:#{OpenSSL::HMAC.hexdigest(:sha1, key, signature)}",
     "hub.topic"         => "https://www.youtube.com/xml/feeds/videos.xml?#{topic}",
     "hub.verify"        => "async",
     "hub.mode"          => "subscribe",

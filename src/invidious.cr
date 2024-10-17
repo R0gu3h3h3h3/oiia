@@ -71,6 +71,7 @@ ARCHIVE_URL     = URI.parse("https://archive.org")
 PUBSUB_URL      = URI.parse("https://pubsubhubbub.appspot.com")
 REDDIT_URL      = URI.parse("https://www.reddit.com")
 YT_URL          = URI.parse("https://www.youtube.com")
+PUBSUB_HOST_URL = CONFIG.pubsub_domain
 HOST_URL        = make_host_url(Kemal.config)
 EXT_VIDEOP_LIST = gen_videoplayback_proxy_list()
 

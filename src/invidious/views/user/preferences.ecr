@@ -136,6 +136,12 @@
                 <input name="visitor_data" id="visitor_data" type="text" value="<%= preferences.visitor_data %>">
             </div>
 
+        <% if env.get?("user") %>
+			<div class="pure-control-group">
+				<a href="/generate_tokens?referer=<%= URI.encode_www_form(referer) %>"><%= translate(locale, "Generate po_token and visitor_data for your account") %></a>
+			</div>
+        <% end %>
+
             <legend><%= translate(locale, "preferences_category_visual") %></legend>
 
             <div class="pure-control-group">

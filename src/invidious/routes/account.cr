@@ -349,4 +349,40 @@ module Invidious::Routes::Account
       return "{}"
     end
   end
+
+  # -------------------
+  #  poToken and visitorData tokens generation
+  # -------------------
+
+  # Generates a poToken & visitorData for the user, server side
+  def generate_tokens(env)
+    locale = env.get("preferences").as(Preferences).locale
+    preferences = env.get("preferences").as(Preferences)
+
+    user = env.get? "user"
+    sid = env.get? "sid"
+    referer = get_referer(env)
+
+    if !user
+      return env.redirect referer
+    end
+
+    user = user.as(User)
+
+    po_token, visitor_data = Tokens.generate_tokens(user.email)
+
+    if po_token.nil? || visitor_data.nil?
+      return error_template(500, "Internal server error. Please submit an issue here IF THE ISSUE PERSISTS: https://git.nadeko.net/Fijxu/invidious/issues")
+    end
+
+    user.preferences.po_token = po_token
+    user.preferences.visitor_data = visitor_data
+
+    Invidious::Database::Users.update_preferences(user)
+
+    REDIS_DB.del("invidious:#{user.email}:po_token")
+    REDIS_DB.del("invidious:#{user.email}:visitor_data")
+
+    templated "user/tokens"
+  end
 end

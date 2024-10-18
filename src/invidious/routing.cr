@@ -77,6 +77,7 @@ module Invidious::Routing
     post "/authorize_token", Routes::Account, :post_authorize_token
     get "/token_manager", Routes::Account, :token_manager
     post "/token_ajax", Routes::Account, :token_ajax
+    get "/generate_tokens", Routes::Account, :generate_tokens
     post "/subscription_ajax", Routes::Subscriptions, :toggle_subscription
     get "/subscription_manager", Routes::Subscriptions, :subscription_manager
   end

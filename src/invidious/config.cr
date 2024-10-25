@@ -189,6 +189,8 @@ class Config
 
   property pubsub_domain : String = ""
 
+  property ignore_user_tokens : Bool = false
+
   # Materialious redirects
   property materialious_domain : String?
 

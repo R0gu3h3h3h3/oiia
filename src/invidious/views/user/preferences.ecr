@@ -126,6 +126,7 @@
                 <input name="save_player_pos" id="save_player_pos" type="checkbox" <% if preferences.save_player_pos %>checked<% end %>>
             </div>
 
+            <% if !CONFIG.ignore_user_tokens %>
 			<div class="pure-control-group">
                 <label for="po_token"><%= translate(locale, "preferences_po_token") %></label>
                 <input name="po_token" id="po_token" type="text" value="<%= preferences.po_token %>">
@@ -140,6 +141,7 @@
 			<div class="pure-control-group">
 				<a href="/generate_tokens?referer=<%= URI.encode_www_form(referer) %>"><%= translate(locale, "Generate po_token and visitor_data for your account") %></a>
 			</div>
+        <% end %>
         <% end %>
 
             <legend><%= translate(locale, "preferences_category_visual") %></legend>

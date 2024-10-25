@@ -3,8 +3,13 @@
 module Invidious::Routes::Watch
   def self.handle(env)
     locale = env.get("preferences").as(Preferences).locale
-    user_po_token = env.get("preferences").as(Preferences).po_token
-    user_visitor_data = env.get("preferences").as(Preferences).visitor_data
+    if !CONFIG.ignore_user_tokens
+      user_po_token = env.get("preferences").as(Preferences).po_token
+      user_visitor_data = env.get("preferences").as(Preferences).visitor_data
+    else
+      user_po_token = ""
+      user_visitor_data = ""
+    end
 
     region = env.params.query["region"]?
 

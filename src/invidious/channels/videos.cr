@@ -23,13 +23,30 @@ def produce_channel_content_continuation(ucid, content_type, page = 1, auto_gene
     else                    15 # Fallback to "videos"
     end
 
-  sort_by_numerical =
-    case sort_by
-    when "newest"  then 1_i64
-    when "popular" then 2_i64
-    when "oldest"  then 4_i64
-    else                1_i64 # Fallback to "newest"
+  sort_type_numerical =
+    case content_type
+    when "videos"      then 3
+    when "livestreams" then 5
+    else                    3 # Fallback to "videos"
     end
+
+  if content_type == "livestreams"
+    sort_by_numerical =
+      case sort_by
+      when "newest"  then 12_i64
+      when "popular" then 14_i64
+      when "oldest"  then 13_i64
+      else                12_i64 # Fallback to "newest"
+      end
+  else
+    sort_by_numerical =
+      case sort_by
+      when "newest"  then 1_i64
+      when "popular" then 2_i64
+      when "oldest"  then 4_i64
+      else                1_i64 # Fallback to "newest"
+      end
+  end
 
   object_inner_1 = {
     "110:embedded" => {
@@ -41,7 +58,7 @@ def produce_channel_content_continuation(ucid, content_type, page = 1, auto_gene
           "2:embedded" => {
             "1:string" => "00000000-0000-0000-0000-000000000000",
           },
-          "3:varint" => sort_by_numerical,
+          "#{sort_type_numerical}:varint" => sort_by_numerical,
         },
       },
     },

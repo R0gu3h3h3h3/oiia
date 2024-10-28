@@ -95,6 +95,8 @@ class Config
   property hmac_key : String = ""
   # Domain to be used for links to resources on the site where an absolute URL is required
   property domain : String?
+  # Materialious redirects
+  property materialious_domain : String?
   # Alternative domains. You can add other domains, like TOR and I2P addresses
   property alternative_domains : Array(String) = [] of String
   property donation_url : String?
@@ -190,9 +192,11 @@ class Config
   property pubsub_domain : String = ""
 
   property ignore_user_tokens : Bool = false
+  
+  {% if flag?(:linux) %}
+  property reload_config_automatically : Bool = true
+  {% end %}
 
-  # Materialious redirects
-  property materialious_domain : String?
 
   def disabled?(option)
     case disabled = CONFIG.disable_proxy
@@ -207,6 +211,25 @@ class Config
     else
       return false
     end
+  end
+
+  def self.reload
+    LOGGER.info("Config: Reloading configuration")
+    # Load config from file or YAML string env var
+    env_config_file = "INVIDIOUS_CONFIG_FILE"
+    env_config_yaml = "INVIDIOUS_CONFIG"
+    config_file = ENV.has_key?(env_config_file) ? ENV.fetch(env_config_file) : "config/config.yml"
+    config_yaml = ENV.has_key?(env_config_yaml) ? ENV.fetch(env_config_yaml) : File.read(config_file)
+    begin
+      config = Config.from_yaml(config_yaml)
+    rescue ex
+      LOGGER.error("Config: Error when reloading configuration: '#{ex.message}'")
+      config = CONFIG
+    end
+    {% for ivar in Config.instance_vars %}
+	  CONFIG.{{ivar}} = config.{{ivar}}
+	{% end %}
+	LOGGER.info("Config: Reload successfull")
   end
 
   def self.load

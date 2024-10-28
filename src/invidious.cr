@@ -32,6 +32,7 @@ require "yaml"
 require "compress/zip"
 require "protodec/utils"
 require "redis"
+require "inotify"
 
 require "./invidious/database/*"
 require "./invidious/database/migrations/*"
@@ -58,7 +59,20 @@ end
 # Simple alias to make code easier to read
 alias IV = Invidious
 
-CONFIG   = Config.load
+CONFIG = Config.load
+
+Signal::HUP.trap do
+  Config.reload
+end
+
+{% if flag?(:linux) %}
+if CONFIG.reload_config_automatically
+    Inotify.watch("config/config.yml") do |event|
+      Config.reload
+    end
+end
+{% end %}
+
 HMAC_KEY = CONFIG.hmac_key
 
 PG_DB    = DB.open CONFIG.database_url

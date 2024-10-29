@@ -3,6 +3,11 @@ module Invidious::Routes::VideoPlayback
   def self.get_video_playback(env)
     locale = env.get("preferences").as(Preferences).locale
     query_params = env.params.query
+    array = UInt8[0x78, 0]
+    protobuf = Bytes.new(array.size)
+    array.each_with_index do |byte, index|
+      protobuf[index] = byte
+    end
 
     fvip = query_params["fvip"]? || "3"
     mns = query_params["mn"]?.try &.split(",")
@@ -100,7 +105,7 @@ module Invidious::Routes::VideoPlayback
       end
 
       begin
-        client.get(url, headers) do |resp|
+        client.post(url, headers, protobuf) do |resp|
           resp.headers.each do |key, value|
             if !RESPONSE_HEADERS_BLACKLIST.includes?(key.downcase)
               env.response.headers[key] = value
@@ -151,7 +156,7 @@ module Invidious::Routes::VideoPlayback
         headers["Range"] = "bytes=#{chunk_start}-#{chunk_end}"
 
         begin
-          client.get(url, headers) do |resp|
+          client.post(url, headers, protobuf) do |resp|
             if first_chunk
               if !env.request.headers["Range"]? && resp.status_code == 206
                 env.response.status_code = 200

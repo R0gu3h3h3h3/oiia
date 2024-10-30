@@ -152,6 +152,10 @@ module Invidious::Routes::Watch
       end
     end
 
+    audio_streams.reject! do |z|
+      z if z.dig?("audioTrack", "audioIsDefault") == false
+    end
+
     # Older videos may not have audio sources available.
     # We redirect here so they're not unplayable
     if audio_streams.empty? && !video.live_now

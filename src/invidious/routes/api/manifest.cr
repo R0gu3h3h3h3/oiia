@@ -55,6 +55,10 @@ module Invidious::Routes::API::Manifest
       end
     end
 
+    audio_streams.reject! do |z|
+      z if z.dig?("audioTrack", "audioIsDefault") == false
+    end
+
     manifest = XML.build(indent: "  ", encoding: "UTF-8") do |xml|
       xml.element("MPD", "xmlns": "urn:mpeg:dash:schema:mpd:2011",
         "profiles": "urn:mpeg:dash:profile:full:2011", minBufferTime: "PT1.5S", type: "static",

@@ -4,25 +4,51 @@ module Invidious::HttpServer
   module Utils
     extend self
 
-    @@proxy_alive : String = ""
+    @@proxy_list : Array(String) = [] of String
+    @@current_proxy : String = ""
+    @@count : Int64 = Time.utc.to_unix
 
     def check_external_proxy
       CONFIG.external_videoplayback_proxy.each do |proxy|
         begin
-          response = HTTP::Client.get(proxy)
+          response = HTTP::Client.get("#{proxy[:url]}/health")
           if response.status_code == 200
-            @@proxy_alive = proxy
-            LOGGER.debug("CheckExternalProxy: Proxy set to: '#{proxy}'")
-            break
+            if @@proxy_list.includes?(proxy[:url])
+              next
+            end
+            if proxy[:balance]
+              @@proxy_list << proxy[:url]
+              LOGGER.debug("CheckExternalProxy: Adding proxy '#{proxy[:url]}' to the list of proxies")
+            end
+            break if proxy[:balance] == false && !@@proxy_list.empty?
+            @@proxy_list << proxy[:url]
           end
         rescue
-          LOGGER.debug("CheckExternalProxy: Proxy '#{proxy}' is not available")
+          if @@proxy_list.includes?(proxy[:url])
+            LOGGER.debug("CheckExternalProxy: Proxy '#{proxy[:url]}' is not available, removing it from the list of proxies")
+            @@proxy_list.delete(proxy[:url])
+          end
+          LOGGER.debug("CheckExternalProxy: Proxy '#{proxy[:url]}' is not available")
         end
+      end
+      LOGGER.trace("CheckExternalProxy: List of proxies:")
+      LOGGER.trace("#{@@proxy_list.inspect}")
+    end
+
+    # TODO: If the function is called many times, it will return a random
+    # proxy from the list. That is not how it should be.
+    # It should return the same proxy, in multiple function calls
+    def select_proxy
+      if (@@count - (Time.utc.to_unix - 30)) <= 0
+        return if @@proxy_list.size <= 0
+        @@current_proxy = @@proxy_list[Random.rand(@@proxy_list.size)]
+        LOGGER.debug("Current proxy is: '#{@@current_proxy}'")
+        @@count = Time.utc.to_unix
       end
     end
 
     def get_external_proxy
-      return @@proxy_alive
+      return @@current_proxy
     end
 
     def proxy_video_url(raw_url : String, *, region : String? = nil, absolute : Bool = false)
@@ -35,8 +61,8 @@ module Invidious::HttpServer
       url.query_params = params
 
       if absolute
-        if !@@proxy_alive.empty?
-          return "#{@@proxy_alive}#{url.request_target}"
+        if !(proxy = get_external_proxy()).empty?
+          return "#{proxy}#{url.request_target}"
         else
           return "#{HOST_URL}#{url.request_target}"
         end

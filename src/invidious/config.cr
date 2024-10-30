@@ -184,7 +184,7 @@ class Config
 
   # External videoplayback proxies list. They should include `https://`
   # at the start of the URI
-  property external_videoplayback_proxy : Array(String) = [] of String
+  property external_videoplayback_proxy : Array(NamedTuple(url: String, balance: Bool)) = [] of NamedTuple(url: String, balance: Bool)
 
   # Job to refresh tokens from a Redis compatible DB
   property refresh_tokens : Bool = true
@@ -192,11 +192,10 @@ class Config
   property pubsub_domain : String = ""
 
   property ignore_user_tokens : Bool = false
-  
-  {% if flag?(:linux) %}
-  property reload_config_automatically : Bool = true
-  {% end %}
 
+  {% if flag?(:linux) %}
+    property reload_config_automatically : Bool = true
+  {% end %}
 
   def disabled?(option)
     case disabled = CONFIG.disable_proxy
@@ -218,18 +217,57 @@ class Config
     # Load config from file or YAML string env var
     env_config_file = "INVIDIOUS_CONFIG_FILE"
     env_config_yaml = "INVIDIOUS_CONFIG"
+
     config_file = ENV.has_key?(env_config_file) ? ENV.fetch(env_config_file) : "config/config.yml"
     config_yaml = ENV.has_key?(env_config_yaml) ? ENV.fetch(env_config_yaml) : File.read(config_file)
+
     begin
       config = Config.from_yaml(config_yaml)
     rescue ex
       LOGGER.error("Config: Error when reloading configuration: '#{ex.message}'")
       config = CONFIG
     end
+
+    # TODO: Preserve old config and don't exit on fail
     {% for ivar in Config.instance_vars %}
 	  CONFIG.{{ivar}} = config.{{ivar}}
+	  {% env_id = "INVIDIOUS_#{ivar.id.upcase}" %}
+
+        if ENV.has_key?({{env_id}})
+            env_value = ENV.fetch({{env_id}})
+            success = false
+
+            # Use YAML converter if specified
+            {% ann = ivar.annotation(::YAML::Field) %}
+            {% if ann && ann[:converter] %}
+                CONFIG.{{ivar.id}} = {{ann[:converter]}}.from_yaml(YAML::ParseContext.new, YAML::Nodes.parse(ENV.fetch({{env_id}})).nodes[0])
+                success = true
+
+            # Use regular YAML parser otherwise
+            {% else %}
+                {% ivar_types = ivar.type.union? ? ivar.type.union_types : [ivar.type] %}
+                # Sort types to avoid parsing nulls and numbers as strings
+                {% ivar_types = ivar_types.sort_by { |ivar_type| ivar_type == Nil ? 0 : ivar_type == Int32 ? 1 : 2 } %}
+                {{ivar_types}}.each do |ivar_type|
+                    if !success
+                        begin
+                            CONFIG.{{ivar.id}} = ivar_type.from_yaml(env_value)
+                            success = true
+                        rescue
+                            # nop
+                        end
+                    end
+                end
+            {% end %}
+
+            # Exit on fail
+            if !success
+				LOGGER.error("Config: Error when reloading environment variables for the configuration, exiting (fixme!)")
+                exit(1)
+            end
+        end
 	{% end %}
-	LOGGER.info("Config: Reload successfull")
+    LOGGER.info("Config: Reload successfull")
   end
 
   def self.load

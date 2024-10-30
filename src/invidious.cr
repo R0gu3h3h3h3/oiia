@@ -66,11 +66,11 @@ Signal::HUP.trap do
 end
 
 {% if flag?(:linux) %}
-if CONFIG.reload_config_automatically
+  if CONFIG.reload_config_automatically
     Inotify.watch("config/config.yml") do |event|
       Config.reload
     end
-end
+  end
 {% end %}
 
 HMAC_KEY = CONFIG.hmac_key

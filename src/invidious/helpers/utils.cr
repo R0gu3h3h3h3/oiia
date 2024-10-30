@@ -390,7 +390,7 @@ def gen_videoplayback_proxy_list
   if !CONFIG.external_videoplayback_proxy.empty?
     external_videoplayback_proxy = ""
     CONFIG.external_videoplayback_proxy.each do |proxy|
-      external_videoplayback_proxy += " #{proxy}"
+      external_videoplayback_proxy += " #{proxy[:url]}"
     end
   else
     external_videoplayback_proxy = ""

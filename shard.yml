@@ -33,6 +33,9 @@ dependencies:
   inotify:
     github: petoem/inotify.cr
     version: 1.0.3
+  http_proxy:
+    github: mamantoha/http_proxy
+    version: ~> 0.10.3
 
 development_dependencies:
   spectator:

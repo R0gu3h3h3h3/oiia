@@ -152,6 +152,7 @@ module Invidious::Routes::Watch
       end
     end
 
+	# Removes non default audio tracks
     audio_streams.reject! do |z|
       z if z.dig?("audioTrack", "audioIsDefault") == false
     end
@@ -217,6 +218,12 @@ module Invidious::Routes::Watch
       audio_streams: audio_streams,
       captions: video.captions
     )
+
+	begin 
+		video_url = "https://#{URI.parse(fmt_stream[0]["url"].to_s).query_params["host"]}#{fmt_stream[0]["url"].to_s}"
+	rescue
+		video_url = nil
+	end
 
     templated "watch"
   end

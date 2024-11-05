@@ -220,7 +220,7 @@ module Invidious::Routes::Watch
     )
 
 	begin 
-		video_url = "https://#{URI.parse(fmt_stream[0]["url"].to_s).query_params["host"]}#{fmt_stream[0]["url"].to_s}"
+		video_url = fmt_stream[0]["url"].to_s
 	rescue
 		video_url = nil
 	end

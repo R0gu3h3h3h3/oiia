@@ -45,18 +45,5 @@ struct Invidious::User
         samesite: HTTP::Cookie::SameSite::Lax
       )
     end
-
-    # Server ID (SERVER_ID) cookie used for Sticky Sessions
-    # Parameter "domain" comes from the global config
-    def server_id(domain : String?, server_id) : HTTP::Cookie
-      return HTTP::Cookie.new(
-        name: "SERVER_ID",
-        domain: domain,
-        value: server_id,
-        secure: false,
-        http_only: true,
-        samesite: HTTP::Cookie::SameSite::Lax
-      )
-    end
   end
 end

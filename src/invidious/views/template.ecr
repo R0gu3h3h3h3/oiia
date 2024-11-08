@@ -1,7 +1,7 @@
 <%
 	locale = env.get("preferences").as(Preferences).locale
 	dark_mode = env.get("preferences").as(Preferences).dark_mode
-	current_backend = env.request.cookies["SERVER_ID"]?.try &.value
+	current_backend = env.request.cookies[CONFIG.server_id_cookie_name]?.try &.value
 %>
 <!DOCTYPE html>
 <html lang="<%= locale %>">
@@ -310,7 +310,7 @@
             </div>
             <hr/>
             <div class="footer-footer">
-			<div class="box">You are currently using Backend: <%= current_backend %></p>
+			<div class="box">You are currently using Backend: <%= current_backend %></div>
                 <span class="left">
                     <% if CONFIG.modified_source_code_url %>
                         <%= translate(locale, "footer_current_version_modified") %>

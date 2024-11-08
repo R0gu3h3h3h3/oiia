@@ -204,6 +204,8 @@ class Config
 
   property ignore_user_tokens : Bool = false
 
+  property server_id_cookie_name : String = "INVIDIOUS_SERVER_ID"
+
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
   {% end %}

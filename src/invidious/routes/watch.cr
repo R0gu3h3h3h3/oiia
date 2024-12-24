@@ -76,8 +76,14 @@ module Invidious::Routes::Watch
     end
     env.params.query.delete_all("iv_load_policy")
 
+    history_details = JSON::Any.new({
+      "id" => JSON::Any.new(id),
+      "title" => JSON::Any.new(video.title),
+      "author" => JSON::Any.new(video.author)
+    })
+
     if watched && preferences.watch_history
-      Invidious::Database::Users.mark_watched(user.as(User), id)
+      Invidious::Database::Users.mark_watched(user.as(User), history_details)
     end
 
     if CONFIG.enable_user_notifications && notifications && notifications.includes? id
@@ -286,9 +292,9 @@ module Invidious::Routes::Watch
 
     case action
     when "action_mark_watched"
-      Invidious::Database::Users.mark_watched(user, id)
+      # Invidious::Database::Users.mark_watched(user, history_details)
     when "action_mark_unwatched"
-      Invidious::Database::Users.mark_unwatched(user, id)
+      # Invidious::Database::Users.mark_unwatched(user, id)
     else
       return error_json(400, "Unsupported action #{action}")
     end

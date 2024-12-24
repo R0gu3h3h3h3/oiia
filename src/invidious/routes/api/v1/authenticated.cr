@@ -86,7 +86,7 @@ module Invidious::Routes::API::V1::Authenticated
       return error_json(400, "Invalid video id.")
     end
 
-    Invidious::Database::Users.mark_watched(user, id)
+    # Invidious::Database::Users.mark_watched(user, id)
     env.response.status_code = 204
   end
 

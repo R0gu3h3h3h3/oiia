@@ -12,7 +12,7 @@ struct Invidious::User
   property preferences : Preferences
   property password : String?
   property token : String
-  property watched : Array(String)
+  # property watched : Array(String)
   property feed_needs_update : Bool?
 
   module PreferencesConverter

@@ -79,6 +79,16 @@ module Invidious::Database::Users
     PG_DB.exec(request, user.email)
   end
 
+  def get_watched(user : User)
+    request = <<-SQL
+      SELECT watched
+      from users
+      where email = $1
+    SQL
+
+    PG_DB.query_one?(request, user.email, &.read(Array(JSON::Any)))
+  end
+
   # -------------------
   #  Update (channels)
   # -------------------

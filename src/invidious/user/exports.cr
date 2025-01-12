@@ -8,7 +8,7 @@ struct Invidious::User
       return JSON.build do |json|
         json.object do
           json.field "subscriptions", user.subscriptions
-          json.field "watch_history", user.watched
+          # json.field "watch_history", user.watched
           json.field "preferences", user.preferences
           json.field "playlists" do
             json.array do

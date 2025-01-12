@@ -43,7 +43,7 @@ module Invidious::Routes::Watch
     user = env.get?("user").try &.as(User)
     if user
       subscriptions = user.subscriptions
-      watched = user.watched
+      # watched = user.watched
       notifications = user.notifications
     end
     subscriptions ||= [] of String
@@ -74,7 +74,7 @@ module Invidious::Routes::Watch
       "author" => JSON::Any.new(video.author)
     })
 
-    if watched && preferences.watch_history
+    if preferences.watch_history
       Invidious::Database::Users.mark_watched(user.as(User), history_details)
     end
 

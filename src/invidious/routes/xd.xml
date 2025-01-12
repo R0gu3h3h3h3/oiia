@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:yt= \x22http:// www.youtube.com/ xml/ schemas/ 2015\x22 xmlns= \x22http:// www.w3.org/ 2005/ Atom\x22>
+	<link rel= \x22hub\x22 href= \x22https:// pubsubhubbub.appspot.com\x22 />
+	<link rel= \x22self\x22 href= \x22https:// www.youtube.com/ xml/ feeds/ videos.xml?channel_id=UCn8n_wDeUDrdDMQfoElZlfw\x22/>
+	<title>YouTube video feed</title>
+	<updated>2024-12-18T23:19:42.357314923+00:00</updated>
+	<entry>
+	<id>yt:video:YYBivfsnwIU</id> 
+	<yt:videoId>YYBivfsnwIU</yt:videoId>
+	<yt:channelId>
+		UCn8n_wDeUDrdDMQfoElZlfw</yt:channelId>
+		<title>How To Make Silicone Tray Liners For the HARVESTRIGHT FREEZE DRYER #siliconetrayliners</title>
+		<link rel= \x22alternate\x22 href= \x22https:// www.youtube.com/ watch?v=YYBivfsnwIU\x22/>\x0A  
+		<author>\x0A 
+			<name>TheFreeze Drying Community</name>
+			<uri>https://www.youtube.com/channel/UCn8n_wDeUDrdDMQfoElZlfw</uri>
+		</author>
+		<published>
+		2021-02-07T14:00:17+00:00</published>\x0A <updated>2024-12-18T23:19:42.357314923+00:00</updated>
+		\x0A
+	</entry>
+</feed>

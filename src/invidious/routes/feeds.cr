@@ -123,15 +123,17 @@ module Invidious::Routes::Feeds
     end
 
     user = user.as(User)
+    watched = Invidious::Database::Users.get_watched(user)
 
     max_results = env.params.query["max_results"]?.try &.to_i?.try &.clamp(0, MAX_ITEMS_PER_PAGE)
     max_results ||= user.preferences.max_results
     max_results ||= CONFIG.default_user_preferences.max_results
 
-    if user.watched[(page - 1) * max_results]?
-      watched = user.watched.reverse[(page - 1) * max_results, max_results]
-    end
-    watched ||= [] of String
+    # TODO: History!!
+    # if user.watched[(page - 1) * max_results]?
+    #   watched = user.watched.reverse[(page - 1) * max_results, max_results]
+    # end
+    # watched ||= [] of String
 
     # Used for pagination links
     base_url = "/feed/history"

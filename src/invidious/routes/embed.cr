@@ -124,7 +124,7 @@ module Invidious::Routes::Embed
     user = env.get?("user").try &.as(User)
     if user
       subscriptions = user.subscriptions
-      watched = user.watched
+      # watched = user.watched
       notifications = user.notifications
     end
     subscriptions ||= [] of String

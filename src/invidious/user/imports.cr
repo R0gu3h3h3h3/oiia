@@ -100,11 +100,11 @@ struct Invidious::User
         Invidious::Database::Users.update_subscriptions(user)
       end
 
-      if data["watch_history"]?
-        user.watched += data["watch_history"].as_a.map(&.as_s)
-        user.watched.reverse!.uniq!.reverse!
-        Invidious::Database::Users.update_watch_history(user)
-      end
+      # if data["watch_history"]?
+      #   user.watched += data["watch_history"].as_a.map(&.as_s)
+      #   user.watched.reverse!.uniq!.reverse!
+      #   Invidious::Database::Users.update_watch_history(user)
+      # end
 
       if data["preferences"]?
         user.preferences = Preferences.from_json(data["preferences"].to_json)
@@ -219,23 +219,23 @@ struct Invidious::User
     end
 
     def from_youtube_wh(user : User, body : String, filename : String, type : String) : Bool
-      extension = filename.split(".").last
+      # extension = filename.split(".").last
 
-      if extension == "json" || type == "application/json"
-        data = JSON.parse(body)
-        watched = data.as_a.compact_map do |item|
-          next unless url = item["titleUrl"]?
-          next unless match = url.as_s.match(/\?v=(?<video_id>[a-zA-Z0-9_-]+)$/)
-          match["video_id"]
-        end
-        watched.reverse! # YouTube have newest first
-        user.watched += watched
-        user.watched.uniq!
-        Invidious::Database::Users.update_watch_history(user)
-        return true
-      else
+      # if extension == "json" || type == "application/json"
+      #   data = JSON.parse(body)
+      #   watched = data.as_a.compact_map do |item|
+      #     next unless url = item["titleUrl"]?
+      #     next unless match = url.as_s.match(/\?v=(?<video_id>[a-zA-Z0-9_-]+)$/)
+      #     match["video_id"]
+      #   end
+      #   watched.reverse! # YouTube have newest first
+      #   user.watched += watched
+      #   user.watched.uniq!
+      #   Invidious::Database::Users.update_watch_history(user)
+      #   return true
+      # else
         return false
-      end
+      # end
     end
 
     # -------------------
@@ -310,11 +310,11 @@ struct Invidious::User
 
             db = DB.open("sqlite3://" + tempfile.path)
 
-            user.watched += db.query_all("SELECT url FROM streams", as: String)
-              .map(&.lchop("https://www.youtube.com/watch?v="))
+            # user.watched += db.query_all("SELECT url FROM streams", as: String)
+            #   .map(&.lchop("https://www.youtube.com/watch?v="))
 
-            user.watched.uniq!
-            Invidious::Database::Users.update_watch_history(user)
+            # user.watched.uniq!
+            # Invidious::Database::Users.update_watch_history(user)
 
             user.subscriptions += db.query_all("SELECT url FROM subscriptions", as: String)
               .map(&.lchop("https://www.youtube.com/channel/"))

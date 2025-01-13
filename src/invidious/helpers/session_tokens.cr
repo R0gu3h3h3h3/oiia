@@ -10,7 +10,7 @@ module SessionTokens
         LOGGER.error("RefreshSessionTokens: Expected response to have status code 200 but got #{response.status_code} from #{CONFIG.tokens_server}")
       end
       json = JSON.parse(response.body)
-      @@po_token = json.try &.["potoken"].as_s || nil 
+      @@po_token = json.try &.["potoken"].as_s || nil
       @@visitor_data = json.try &.["visitorData"].as_s || nil
     rescue ex
       LOGGER.error("RefreshSessionTokens: Failed to fetch tokens from #{CONFIG.tokens_server}: #{ex.message}")

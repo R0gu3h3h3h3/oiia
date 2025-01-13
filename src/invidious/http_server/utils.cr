@@ -19,9 +19,9 @@ module Invidious::HttpServer
           LOGGER.debug("CheckExternalProxy: Proxy '#{proxy}' is not available")
         end
       end
-	  if @@proxy_alive.empty?
-		LOGGER.warn("CheckExternalProxy: No proxies alive! Using own server proxy")
-	  end
+      if @@proxy_alive.empty?
+        LOGGER.warn("CheckExternalProxy: No proxies alive! Using own server proxy")
+      end
     end
 
     def get_external_proxy

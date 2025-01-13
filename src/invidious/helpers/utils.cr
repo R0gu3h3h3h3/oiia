@@ -384,20 +384,6 @@ def parse_link_endpoint(endpoint : JSON::Any, text : String, video_id : String)
   return text
 end
 
-# Generates a list of external videoplayback proxies for 
-# CSP
-def gen_videoplayback_proxy_list
-  if !CONFIG.external_videoplayback_proxy.empty?
-    external_videoplayback_proxy = ""
-    CONFIG.external_videoplayback_proxy.each do |proxy|
-      external_videoplayback_proxy += " #{proxy}"
-    end
-  else
-    external_videoplayback_proxy = ""
-  end
-  return external_videoplayback_proxy
-end
-
 def encrypt_ecb_without_salt(data, key)
   cipher = OpenSSL::Cipher.new("aes-128-ecb")
   cipher.encrypt

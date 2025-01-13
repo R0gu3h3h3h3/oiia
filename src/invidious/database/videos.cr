@@ -4,22 +4,11 @@ module Invidious::Database::Videos
   extend self
 
   def insert(video : Video)
-    request = <<-SQL
-      INSERT INTO videos
-      VALUES ($1, $2, $3)
-      ON CONFLICT (id) DO NOTHING
-    SQL
-
     REDIS_DB.set(video.id, video.info.to_json, ex: 14400)
     REDIS_DB.set(video.id + ":time", video.updated, ex: 14400)
   end
 
   def delete(id)
-    request = <<-SQL
-      DELETE FROM videos *
-      WHERE id = $1
-    SQL
-
     REDIS_DB.del(id)
     REDIS_DB.del(id + ":time")
   end
@@ -44,11 +33,6 @@ module Invidious::Database::Videos
   end
 
   def select(id : String) : Video?
-    request = <<-SQL
-      SELECT * FROM videos
-      WHERE id = $1
-    SQL
-
     if ((info = REDIS_DB.get(id)) && (time = REDIS_DB.get(id + ":time")))
       return Video.new({
         id:      id,

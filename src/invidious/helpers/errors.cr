@@ -180,6 +180,7 @@ def error_redirect_helper(env : HTTP::Server::Context)
     next_steps_text = translate(locale, "next_steps_error_message")
     refresh = translate(locale, "next_steps_error_message_refresh")
     go_to_youtube = translate(locale, "next_steps_error_message_go_to_youtube")
+    go_to_youtube_embed = translate(locale, "videoinfo_youTube_embed_link")
     switch_instance = translate(locale, "Switch Invidious Instance")
 
     return <<-END_HTML
@@ -193,6 +194,7 @@ def error_redirect_helper(env : HTTP::Server::Context)
         </li>
         <li>
           <a rel="noreferrer noopener" href="https://youtube.com#{env.request.resource}">#{go_to_youtube}</a>
+          (<a rel="noreferrer noopener" href="https://youtube.com/embed/#{env.params.query["v"]}">#{go_to_youtube_embed}</a>)
         </li>
       </ul>
     END_HTML

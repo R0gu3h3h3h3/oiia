@@ -202,7 +202,7 @@ module YoutubeAPI
     def initialize(
       *,
       @client_type = ClientType::Web,
-      @region = "US"
+      @region = "US",
     )
     end
 
@@ -361,7 +361,7 @@ module YoutubeAPI
     browse_id : String,
     *, # Force the following parameters to be passed by name
     params : String,
-    client_config : ClientConfig | Nil = nil
+    client_config : ClientConfig | Nil = nil,
   )
     # JSON Request data, required by the API
     data = {
@@ -552,7 +552,7 @@ module YoutubeAPI
   def search(
     search_query : String,
     params : String,
-    client_config : ClientConfig | Nil = nil
+    client_config : ClientConfig | Nil = nil,
   )
     # JSON Request data, required by the API
     data = {
@@ -578,7 +578,7 @@ module YoutubeAPI
 
   def get_transcript(
     params : String,
-    client_config : ClientConfig | Nil = nil
+    client_config : ClientConfig | Nil = nil,
   ) : Hash(String, JSON::Any)
     data = {
       "context" => self.make_context(client_config),

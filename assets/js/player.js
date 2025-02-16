@@ -47,6 +47,8 @@ videojs.Vhs.xhr.beforeRequest = function(options) {
         if (!options.uri.includes('local=true'))
             options.uri += '?local=true';
     }
+    // Set XHR timeout because the default is 0
+    options.timeout = 30000;
     return options;
 };
 

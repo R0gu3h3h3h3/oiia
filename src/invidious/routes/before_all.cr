@@ -54,7 +54,7 @@ module Invidious::Routes::BeforeAll
       "default-src 'none'",
       "script-src 'self'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data:",
+      "img-src 'self' data: " + HOST_URL,
       "font-src 'self' data:",
       "connect-src 'self'" + extra_connect_csp,
       "manifest-src 'self'",

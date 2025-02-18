@@ -1,16 +1,70 @@
 require "./base.cr"
 
 module Invidious::Database::Videos
+  module DBCache
+    extend self
+
+    def set(video : Video, expire_time)
+      if redis = REDIS_DB
+        redis.set(video.id, video.info.to_json, expire_time)
+        redis.set(video.id + ":time", video.updated, expire_time)
+      else
+        request = <<-SQL
+          INSERT INTO videos
+          VALUES ($1, $2, $3)
+          ON CONFLICT (id) DO NOTHING
+        SQL
+
+        PG_DB.exec(request, video.id, video.info.to_json, video.updated)
+      end
+    end
+
+    def del(id : String)
+      if redis = REDIS_DB
+        redis.del(id)
+        redis.del(id + ":time")
+      else
+        request = <<-SQL
+          DELETE FROM videos *
+          WHERE id = $1
+        SQL
+
+        PG_DB.exec(request, id)
+      end
+    end
+
+    def get(id : String)
+      if redis = REDIS_DB
+        info = redis.get(id)
+        time = redis.get(id + ":time")
+        if info && time
+          return Video.new({
+            id:      id,
+            info:    JSON.parse(info).as_h,
+            updated: Time.parse(time, "%Y-%m-%d %H:%M:%S %z", Time::Location::UTC),
+          })
+        else
+          return nil
+        end
+      else
+        request = <<-SQL
+          SELECT * FROM videos
+          WHERE id = $1
+        SQL
+
+        return PG_DB.query_one?(request, id, as: Video)
+      end
+    end
+  end
+
   extend self
 
   def insert(video : Video)
-    REDIS_DB.set(video.id, video.info.to_json, ex: 14400)
-    REDIS_DB.set(video.id + ":time", video.updated, ex: 14400)
+    DBCache.set(video: video, expire_time: 14400)
   end
 
   def delete(id)
-    REDIS_DB.del(id)
-    REDIS_DB.del(id + ":time")
+    DBCache.del(id)
   end
 
   def delete_expired
@@ -33,14 +87,6 @@ module Invidious::Database::Videos
   end
 
   def select(id : String) : Video?
-    if ((info = REDIS_DB.get(id)) && (time = REDIS_DB.get(id + ":time")))
-      return Video.new({
-        id:      id,
-        info:    JSON.parse(info).as_h,
-        updated: Time.parse(time, "%Y-%m-%d %H:%M:%S %z", Time::Location::UTC),
-      })
-    else
-      return nil
-    end
+    return DBCache.get(id)
   end
 end

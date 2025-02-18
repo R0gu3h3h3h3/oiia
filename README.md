@@ -1,170 +1,46 @@
-<div align="center">
-  <img src="assets/invidious-colored-vector.svg" width="192" height="192" alt="Invidious logo">
-  <h1>Invidious</h1>
+# nadeko.net Invidious fork
 
-  <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">
-    <img alt="License: AGPLv3" src="https://shields.io/badge/License-AGPL%20v3-blue.svg">
-  </a>
-  <a href="https://github.com/iv-org/invidious/actions">
-    <img alt="Build Status" src="https://github.com/iv-org/invidious/workflows/Invidious%20CI/badge.svg">
-  </a>
-  <a href="https://github.com/iv-org/invidious/commits/master">
-    <img alt="GitHub commits" src="https://img.shields.io/github/commit-activity/y/iv-org/invidious?color=red&label=commits">
-  </a>
-  <a href="https://github.com/iv-org/invidious/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/iv-org/invidious?color=important">
-  </a>
-  <a href="https://github.com/iv-org/invidious/pulls">
-    <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/iv-org/invidious?color=blueviolet">
-  </a>
-  <a href="https://hosted.weblate.org/engage/invidious/">
-    <img alt="Translation Status" src="https://hosted.weblate.org/widgets/invidious/-/translations/svg-badge.svg">
-  </a>
+This is a fork of Invidious with features that I have done for my own instance. If you want to maintain an instance, feel free to use this fork and it's container images (they are also compatible with Podman, not just docker!)
 
-  <a href="https://github.com/humanetech-community/awesome-humane-tech">
-    <img alt="Awesome Humane Tech" src="https://raw.githubusercontent.com/humanetech-community/awesome-humane-tech/main/humane-tech-badge.svg?sanitize=true">
-  </a>
+https://git.nadeko.net/Fijxu/-/packages/container/invidious/latest
 
-  <h3>An open source alternative front-end to YouTube</h3>
-
-  <a href="https://invidious.io/">Website</a>
-  &nbsp;•&nbsp;
-  <a href="https://instances.invidious.io/">Instances list</a>
-  &nbsp;•&nbsp;
-  <a href="https://docs.invidious.io/faq/">FAQ</a>
-  &nbsp;•&nbsp;
-  <a href="https://docs.invidious.io/">Documentation</a>
-  &nbsp;•&nbsp;
-  <a href="#contribute">Contribute</a>
-  &nbsp;•&nbsp;
-  <a href="https://invidious.io/donate/">Donate</a>
-
-  <h5>Chat with us:</h5>
-  <a href="https://matrix.to/#/#invidious:matrix.org">
-    <img alt="Matrix" src="https://img.shields.io/matrix/invidious:matrix.org?label=Matrix&color=darkgreen">
-  </a>
-  <a href="https://web.libera.chat/?channel=#invidious">
-    <img alt="Libera.chat (IRC)" src="https://img.shields.io/badge/IRC%20%28Libera.chat%29-%23invidious-darkgreen">
-  </a>
-  <br>
-  <a rel="me" href="https://social.tchncs.de/@invidious">
-  <img alt="Fediverse: @invidious@social.tchncs.de" src="https://img.shields.io/badge/Fediverse-%40invidious%40social.tchncs.de-darkgreen">
-  </a>
-  <br>
-  <a href="https://invidious.io/contact/">
-  <img alt="E-mail" src="https://img.shields.io/badge/E%2d%2dmail-darkgreen">
-  </a>
-</div>
-
-
-## Screenshots
-
-| Player                              | Preferences                         | Subscriptions                         |
-|-------------------------------------|-------------------------------------|---------------------------------------|
-| ![](screenshots/01_player.png)      | ![](screenshots/02_preferences.png) | ![](screenshots/03_subscriptions.png) |
-| ![](screenshots/04_description.png) | ![](screenshots/05_preferences.png) | ![](screenshots/06_subscriptions.png) |
-
-
-## Features
-
-**User features**
-- Lightweight
-- No ads
-- No tracking
-- No JavaScript required
-- Light/Dark themes
-- Customizable homepage
-- Subscriptions independent from Google
-- Notifications for all subscribed channels
-- Audio-only mode (with background play on mobile)
-- Support for Reddit comments
-- [Available in many languages](locales/), thanks to [our translators](#contribute)
-
-**Data import/export**
-- Import subscriptions from YouTube, NewPipe and Freetube
-- Import watch history from YouTube and NewPipe
-- Export subscriptions to NewPipe and Freetube
-- Import/Export Invidious user data
-
-**Technical features**
-- Embedded video support
-- [Developer API](https://docs.invidious.io/api/)
-- Does not use official YouTube APIs
-- No Contributor License Agreement (CLA)
-
-
-## Quick start
-
-**Using invidious:**
-
-- [Select a public instance from the list](https://instances.invidious.io) and start watching videos right now!
-
-**Hosting invidious:**
-
-- [Follow the installation instructions](https://docs.invidious.io/installation/)
-
-
-## Documentation
-
-The full documentation can be accessed online at https://docs.invidious.io/
-
-The documentation's source code is available in this repository:
-https://github.com/iv-org/documentation
-
-### Extensions
-
-We highly recommend the use of [Privacy Redirect](https://github.com/SimonBrazell/privacy-redirect#get),
-a browser extension that automatically redirects Youtube URLs to any Invidious instance and replaces
-embedded youtube videos on other websites with invidious.
-
-The documentation contains a list of browser extensions that we recommended to use along with Invidious.
-
-You can read more here: https://docs.invidious.io/applications/
-
-
-## Contribute
-
-### Code
-
-1.  Fork it ( https://github.com/iv-org/invidious/fork ).
-1.  Create your feature branch (`git checkout -b my-new-feature`).
-1.  Stage your files (`git add .`).
-1.  Commit your changes (`git commit -am 'Add some feature'`).
-1.  Push to the branch (`git push origin my-new-feature`).
-1.  Create a new pull request ( https://github.com/iv-org/invidious/compare ).
-
-### Translations
-
-We use [Weblate](https://weblate.org) to manage Invidious translations.
-
-You can suggest new translations and/or correction here: https://hosted.weblate.org/engage/invidious/.
-
-Creating an account is not required, but recommended, especially if you want to contribute regularly.
-Weblate also allows you to log-in with major SSO providers like Github, Gitlab, BitBucket, Google, ...
-
-
-## Projects using Invidious
-
-A list of projects and extensions for or utilizing Invidious can be found in the documentation: https://docs.invidious.io/applications/
-
-## Liability
-
-We take no responsibility for the use of our tool, or external instances
-provided by third parties. We strongly recommend you abide by the valid
-official regulations in your country. Furthermore, we refuse liability
-for any inappropriate use of Invidious, such as illegal downloading.
-This tool is provided to you in the spirit of free, open software.
-
-You may view the LICENSE in which this software is provided to you [here](./LICENSE).
-
->   16. Limitation of Liability.
+> [!CAUTION]
+> If you already have an Invidious instance running the upstream code, moving it to this fork will not work for you!
+> This is due to the "Removal of materialized views on PostgreSQL" pull request that requires a migration of the database
+> using it.
 >
-> IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
-DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
+> If you don't have an instance already, you can use this fork safely, but you will not be able to switch to upstream Invidious.
+
+## Features and changes of this fork:
+
+- [Use a Redis compatible DB for video cache instead of just PostgreSQL](https://git.nadeko.net/Fijxu/invidious/commit/bbc5913b8dacaed4d466bcc466a0782d5e3f5edc): Invidious by default caches the video information for some hours in PostgreSQL. Since the data is accessed a lot, it is better off using an in memory database instead, it's faster and it will not wear out your SSD (due to constant writes to the database).
+
+It can be set using this on `config.yml`:
+```yaml
+redis_url: tcp://127.0.0.1:6379
+```
+
+- [Removal of materialized views on PostgreSQL](github.com/iv-org/invidious/pull/2469): If you don't have this on your Invidious public instance, your SSD will suffer and it will catch on fire https://github.com/iv-org/invidious/pull/2469#issuecomment-2012623454
+
+- External video playback proxy: Let's you use an external video playback proxy like https://git.nadeko.net/Fijxu/http3-ytproxy or https://github.com/TeamPiped/piped-proxy instead of the one that is bundled with Invidious. It's useful if you are proxying video and your throughput is not low. I did this to distribute the traffic across different servers. If you are selfhosting only for a few amount of people, this is not really useful for you.
+
+It can be set using this on `config.yml`:
+```yaml
+external_videoplayback_proxy: "https://inv-proxy.example.com"
+```
+
+> [!NOTE]
+> If you setup this, Invidious will check if the proxy is alive doing a request to `https://inv-proxy.example.com/health`, and if it doesn't get a response code of 200, Invidious will fallback to the local videoplayback proxy! This is only currently supported by https://git.nadeko.net/Fijxu/http3-ytproxy
+
+- Limit the DASH resolution sent to the clients: It can be set using `max_dash_resolution` on the config. Example: `max_dash_resolution: 1080`
+
+- [Limit requests made to Youtube API when pulling subscriptions (feeds)](https://git.nadeko.net/Fijxu/invidious/commit/df94f1c0b82d95846574487231ea251530838ef0): Due to the recent changes of Youtube ("This helps protect out community", "Sign in to confirm you are not a bot"), subscriptions now have limited information, this is because Invidious by default, makes a video request to youtube to be able to get more information about the video, like `length_seconds`, `live_now`, `premiere_timestamp`, and `views`. If you have a lot of users with a ton of subscriptions, Invidious will basically spam youtube API all the time, resulting in a block from youtube.
+
+It can be set using this on `config.yml`:
+```yaml
+use_innertube_for_feeds: false
+```
+
+---
+
+There is more things that I added to this fork, but those are the most important ones. I also regularly merge unmerged pull requests from https://github.com/iv-org/invidious and random fixes as well. Is not the most stable codebase, but you can't really make something stable when youtube is trying to destroy every third party client out there.

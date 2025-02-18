@@ -58,6 +58,7 @@ videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 80;
 var player = videojs('player', options);
 
 player.on('error', function () {
+    console.debug(`[VideoJS Debug] Playback cannot continue, error: ${player.error().code}`)
     if (video_data.params.quality === 'dash') return;
 
     var localNotDisabled = (

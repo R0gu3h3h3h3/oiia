@@ -108,7 +108,7 @@
 
 				<% if !CONFIG.backends.empty? %>
                 <% if !CONFIG.backend_domains.includes?(env.request.headers["Host"]) %>
-				<div class="h-box">
+				<div class="h-box" style="margin-bottom: 10px;">
 					<b>Switch Backend:</b>
 					<% CONFIG.backends.each do | backend | %>
 					<% backend = backend.split(CONFIG.backends_delimiter) %>

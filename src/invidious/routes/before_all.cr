@@ -62,7 +62,7 @@ module Invidious::Routes::BeforeAll
       "child-src 'self' blob:",
       "frame-src 'self'",
       "frame-ancestors " + frame_ancestors,
-    }.join("; ")
+    }.join("; ") if CONFIG.csp
 
     env.response.headers["Referrer-Policy"] = "same-origin"
 

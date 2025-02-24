@@ -213,8 +213,6 @@ class Config
 
   property pubsub_domain : String = ""
 
-  property ignore_user_tokens : Bool = false
-
   property server_id_cookie_name : String = "INVIDIOUS_SERVER_ID"
 
   property tokens_server : String = ""

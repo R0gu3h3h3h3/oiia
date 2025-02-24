@@ -219,6 +219,8 @@ class Config
 
   property tokens_server : String = ""
 
+  property video_cache : Bool = true
+
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
   {% end %}

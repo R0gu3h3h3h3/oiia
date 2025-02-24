@@ -60,7 +60,7 @@ module Invidious::Database::Videos
   extend self
 
   def insert(video : Video)
-    DBCache.set(video: video, expire_time: 14400)
+    DBCache.set(video: video, expire_time: 14400) if CONFIG.video_cache
   end
 
   def delete(id)

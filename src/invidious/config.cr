@@ -217,7 +217,16 @@ class Config
 
   property tokens_server : String = ""
 
-  property video_cache : Bool = true
+  property video_cache : VideoCacheConfig
+
+  class VideoCacheConfig
+    include YAML::Serializable
+
+    property enabled : Bool = true
+    property backend : Int32 = 1
+    # Max quantity of keys that can be held on the LRU cache
+    property lru_max_size : Int32 = 18432 # ~512MB
+  end
 
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
@@ -391,6 +400,16 @@ class Config
         )
       else
         puts "Config: Either database_url or db.* is required"
+        exit(1)
+      end
+    end
+
+    if config.video_cache.enabled
+      if !config.video_cache.backend.in?(0, 1, 2)
+        puts "Config: 'video_cache_storage', can only be:"
+        puts "0 (PostgreSQL)"
+        puts "1 (Redis compatible DB) (Default)"
+        puts "2 (In memory LRU)"
         exit(1)
       end
     end

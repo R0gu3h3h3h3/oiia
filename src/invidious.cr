@@ -156,19 +156,6 @@ end
 OUTPUT = CONFIG.output.upcase == "STDOUT" ? STDOUT : File.open(CONFIG.output, mode: "a")
 LOGGER = Invidious::LogHandler.new(OUTPUT, CONFIG.log_level, CONFIG.colorize_logs)
 
-REDIS_DB = begin
-  LOGGER.info "Connecting to Redis compatible DB"
-  redis = Redis::PooledClient.new(unixsocket: CONFIG.redis_socket || nil, url: CONFIG.redis_url || nil)
-  if redis.ping
-    LOGGER.info "Connected to Redis compatible DB via unix domain socket at '#{CONFIG.redis_socket}'" if CONFIG.redis_socket
-    LOGGER.info "Connected to Redis compatible DB via TCP socket at '#{CONFIG.redis_url}'" if CONFIG.redis_url
-  end
-  redis
-rescue ex
-  LOGGER.error "Failed to connect to a Redis compatible DB. Invidious will store the video cache on the PostgresSQL DB"
-  nil
-end
-
 # Check table integrity
 Invidious::Database.check_integrity(CONFIG)
 

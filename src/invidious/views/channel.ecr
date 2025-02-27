@@ -12,6 +12,7 @@
     when .channels?  then "/channel/#{ucid}/channels"
     when .podcasts?  then "/channel/#{ucid}/podcasts"
     when .releases?  then "/channel/#{ucid}/releases"
+    when .courses? then "/channel/#{ucid}/courses"
     else
       "/channel/#{ucid}"
     end
@@ -21,7 +22,9 @@
 
   page_nav_html = IV::Frontend::Pagination.nav_ctoken(locale,
     base_url: relative_url,
-    ctoken: next_continuation
+    ctoken: next_continuation,
+    first_page: continuation.nil?,
+    params: env.params.query,
   )
 %>
 
@@ -40,6 +43,8 @@
 <meta name="twitter:image" content="<%= host %>/ggpht<%= channel_profile_pic %>">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed/channel/<%= ucid %>" />
 <%- end -%>
+
+<script src="/js/pagination.js?v=<%= ASSET_COMMIT %>"></script>
 
 <link rel="alternate" href="<%= youtube_url %>">
 <title><%= author %> - Invidious</title>

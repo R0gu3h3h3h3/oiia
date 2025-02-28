@@ -223,6 +223,10 @@ else
   LOGGER.info("jobs: Disabling RefreshSessionTokens job. Invidious will use the tokens that are on the configuration file")
 end
 
+if CONFIG.invidious_companion.present?
+  Invidious::Jobs.register Invidious::Jobs::CheckBackend.new
+end
+
 Invidious::Jobs.start_all
 
 def popular_videos

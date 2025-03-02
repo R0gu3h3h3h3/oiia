@@ -4,9 +4,9 @@ class Invidious::Jobs::CheckBackend < Invidious::Jobs::BaseJob
 
   def begin
     loop do
-      BackendInfo.get_videoplayback_proxy
-      LOGGER.info("Backend Checker: Done, sleeping for 60 seconds")
-      sleep 60.seconds
+      BackendInfo.check_backends
+      LOGGER.info("Backend Checker: Done, sleeping for 30 seconds")
+      sleep 30.seconds
       Fiber.yield
     end
   end

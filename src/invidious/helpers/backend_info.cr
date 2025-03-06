@@ -4,7 +4,6 @@ module BackendInfo
   @@status : Int32 = 0
 
   def check_backends
-    check_videoplayback_proxy()
     check_companion()
   end
 

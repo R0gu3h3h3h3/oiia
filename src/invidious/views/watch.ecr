@@ -207,13 +207,15 @@ we're going to need to do it here in order to allow for translations.
             <p id="views"><i class="icon ion-ios-eye"></i> <%= number_with_separator(video.views) %></p>
             <p id="likes"><i class="icon ion-ios-thumbs-up"></i> <%= number_with_separator(video.likes) %></p>
             <p id="dislikes" style="display: none; visibility: hidden;"></p>
-            <p id="genre"><%= translate(locale, "Genre: ") %>
-                <% if !video.genre_url %>
-                    <%= video.genre %>
-                <% else %>
-                    <a href="<%= video.genre_url %>"><%= video.genre %></a>
-                <% end %>
-            </p>
+            <% if !video.genre.nil? && !video.genre.empty? %>
+                <p id="genre"><%= translate(locale, "Genre: ") %>
+                    <% if !video.genre_url %>
+                        <%= video.genre %>
+                    <% else %>
+                        <a href="<%= video.genre_url %>"><%= video.genre %></a>
+                    <% end %>
+                </p>
+            <% end %>
             <% if video.license %>
                 <% if video.license.empty? %>
                     <p id="license"><%= translate(locale, "License: ") %><%= translate(locale, "Standard YouTube license") %></p>
@@ -225,14 +227,16 @@ we're going to need to do it here in order to allow for translations.
             <p id="wilson" style="display: none; visibility: hidden;"></p>
             <p id="rating" style="display: none; visibility: hidden;"></p>
             <p id="engagement" style="display: none; visibility: hidden;"></p>
-            <% if video.allowed_regions.size != REGIONS.size %>
-                <p id="allowed_regions">
-                    <% if video.allowed_regions.size < REGIONS.size // 2 %>
-                        <%= translate(locale, "Whitelisted regions: ") %><%= video.allowed_regions.join(", ") %>
-                    <% else %>
-                        <%= translate(locale, "Blacklisted regions: ") %><%= (REGIONS.to_a - video.allowed_regions).join(", ") %>
-                    <% end %>
-                </p>
+            <% if !video.allowed_regions.nil? && !video.allowed_regions.empty? %>
+                <% if video.allowed_regions.size != REGIONS.size %>
+                    <p id="allowed_regions">
+                        <% if video.allowed_regions.size < REGIONS.size // 2 %>
+                            <%= translate(locale, "Whitelisted regions: ") %><%= video.allowed_regions.join(", ") %>
+                        <% else %>
+                            <%= translate(locale, "Blacklisted regions: ") %><%= (REGIONS.to_a - video.allowed_regions).join(", ") %>
+                        <% end %>
+                    </p>
+                <% end %>
             <% end %>
         </div>
     </div>

@@ -200,7 +200,6 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
   microformat = player_response.dig?("microformat", "playerMicroformatRenderer")
 
   raise BrokenTubeException.new("videoDetails") if !video_details
-  raise BrokenTubeException.new("microformat") if !microformat
 
   # Basic video infos
 
@@ -216,13 +215,13 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
   views_txt ||= video_details["viewCount"]?.try &.as_s || ""
   views = views_txt.gsub(/\D/, "").to_i64?
 
-  length_txt = (microformat["lengthSeconds"]? || video_details["lengthSeconds"])
+  length_txt = (microformat.try &.["lengthSeconds"]? || video_details["lengthSeconds"])
     .try &.as_s.to_i64
 
-  published = microformat["publishDate"]?
+  published = microformat.try &.["publishDate"]?
     .try { |t| Time.parse(t.as_s, "%Y-%m-%d", Time::Location::UTC) } || Time.utc
 
-  premiere_timestamp = microformat.dig?("liveBroadcastDetails", "startTimestamp")
+  premiere_timestamp = microformat.try &.dig?("liveBroadcastDetails", "startTimestamp")
     .try { |t| Time.parse_rfc3339(t.as_s) }
 
   premiere_timestamp ||= player_response.dig?(
@@ -233,7 +232,7 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
     .try &.as_s.to_i64
       .try { |t| Time.unix(t) }
 
-  live_now = microformat.dig?("liveBroadcastDetails", "isLiveNow")
+  live_now = microformat.try &.dig?("liveBroadcastDetails", "isLiveNow")
     .try &.as_bool
   live_now ||= video_details.dig?("isLive").try &.as_bool || false
 
@@ -242,11 +241,11 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
 
   # Extra video infos
 
-  allowed_regions = microformat["availableCountries"]?
+  allowed_regions = microformat.try &.["availableCountries"]?
     .try &.as_a.map &.as_s || [] of String
 
   allow_ratings = video_details["allowRatings"]?.try &.as_bool
-  family_friendly = microformat["isFamilySafe"].try &.as_bool
+  family_friendly = microformat.try &.["isFamilySafe"].try &.as_bool
   is_listed = video_details["isCrawlable"]?.try &.as_bool
   is_upcoming = video_details["isUpcoming"]?.try &.as_bool
 
@@ -329,7 +328,7 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
 
   # Description
 
-  description = microformat.dig?("description", "simpleText").try &.as_s || ""
+  description = microformat.try &.dig?("description", "simpleText").try &.as_s || ""
   short_description = player_response.dig?("videoDetails", "shortDescription")
 
   # description_html = video_secondary_renderer.try &.dig?("description", "runs")
@@ -343,7 +342,7 @@ def parse_video_info(video_id : String, player_response : Hash(String, JSON::Any
     .try &.dig?("metadataRowContainer", "metadataRowContainerRenderer", "rows")
       .try &.as_a
 
-  genre = microformat["category"]?
+  genre = microformat.try &.["category"]?
   genre_ucid = nil
   license = nil
 

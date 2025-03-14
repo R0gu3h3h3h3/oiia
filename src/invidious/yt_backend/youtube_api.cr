@@ -672,7 +672,7 @@ module YoutubeAPI
   #
   def _post_invidious_companion(
     endpoint : String,
-    data : Hash
+    data : Hash,
   ) : Hash(String, JSON::Any)
     headers = HTTP::Headers{
       "Content-Type"  => "application/json; charset=UTF-8",

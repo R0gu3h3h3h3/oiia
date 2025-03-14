@@ -209,6 +209,14 @@ module Invidious::Routes::Watch
       video_url = nil
     end
 
+    if CONFIG.invidious_companion.present?
+      invidious_companion = CONFIG.invidious_companion.sample
+      env.response.headers["Content-Security-Policy"] =
+        env.response.headers["Content-Security-Policy"]
+          .gsub("media-src", "media-src #{invidious_companion.public_url}")
+          .gsub("connect-src", "connect-src #{invidious_companion.public_url}")
+    end
+
     templated "watch"
   end
 
@@ -339,7 +347,8 @@ module Invidious::Routes::Watch
 
       if (CONFIG.invidious_companion.present?)
         video = get_video(video_id)
-        return env.redirect "#{video.invidious_companion["baseUrl"].as_s}/latest_version?#{env.params.query}"
+        invidious_companion = CONFIG.invidious_companion.sample
+        return env.redirect "#{invidious_companion.public_url}/latest_version?#{env.params.query}"
       else
         return Invidious::Routes::VideoPlayback.latest_version(env)
       end

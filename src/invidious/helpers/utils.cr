@@ -384,6 +384,29 @@ def parse_link_endpoint(endpoint : JSON::Any, text : String, video_id : String)
   return text
 end
 
+def decrypt_ecb_without_salt(data, key)
+  cipher = OpenSSL::Cipher.new("aes-128-ecb")
+  cipher.decrypt
+  cipher.key = key
+  cipher.padding = false
+
+  io = IO::Memory.new
+  io.write(cipher.update(data))
+  io.write(cipher.final)
+  io.rewind
+
+  data_ = io.to_s
+  padding = data_[-1].ord
+
+  return data_[0...(data_.bytesize - padding)]
+end
+
+def video_playback_decrypt(data)
+  data = Base64.decode(data)
+  decrypted_query = decrypt_ecb_without_salt(data, CONFIG.invidious_companion_key)
+  return decrypted_query
+end
+
 def encrypt_ecb_without_salt(data, key)
   cipher = OpenSSL::Cipher.new("aes-128-ecb")
   cipher.encrypt

@@ -3,6 +3,11 @@ module Invidious::Routes::VideoPlayback
   def self.get_video_playback(env)
     locale = env.get("preferences").as(Preferences).locale
     query_params = env.params.query
+
+    if query_params["enc"]? == "yes"
+      query_params = URI::Params.parse(video_playback_decrypt(query_params["data"]))
+    end
+
     array = UInt8[0x78, 0]
     protobuf = Bytes.new(array.size)
     array.each_with_index do |byte, index|

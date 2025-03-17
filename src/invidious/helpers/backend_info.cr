@@ -11,7 +11,6 @@ module BackendInfo
     begin
       response = HTTP::Client.get "#{CONFIG.invidious_companion.sample.private_url}/healthz"
       if response.status_code == 200
-        @@status = 1
         check_videoplayback_proxy()
       else
         @@status = 0
@@ -36,6 +35,8 @@ module BackendInfo
           if exvpp_health.status_code == 200
             @@status = 2
             return
+          else
+            @@status = 1
           end
         rescue
           @@status = 1

@@ -5,8 +5,8 @@ class Invidious::Jobs::CheckBackend < Invidious::Jobs::BaseJob
   def begin
     loop do
       BackendInfo.check_backends
-      LOGGER.info("Backend Checker: Done, sleeping for 30 seconds")
-      sleep 30.seconds
+      LOGGER.info("Backend Checker: Done, sleeping for #{CONFIG.check_backends_interval} seconds")
+      sleep CONFIG.check_backends_interval.seconds
       Fiber.yield
     end
   end

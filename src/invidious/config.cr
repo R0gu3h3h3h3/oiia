@@ -237,6 +237,8 @@ class Config
     property lru_max_size : Int32 = 18432 # ~512MB
   end
 
+  property check_backends_interval : Int32 = 30
+
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
   {% end %}

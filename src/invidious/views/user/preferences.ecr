@@ -34,7 +34,10 @@
 
             <div class="pure-control-group">
                 <label for="local"><%= translate(locale, "preferences_local_label") %></label>
-                <input name="local" id="local" type="checkbox" <% if preferences.local && !CONFIG.disabled?("local") %>checked<% end %> <% if CONFIG.disabled?("local") %>disabled<% end %>>
+                <input name="local" id="local" type="checkbox" <% if CONFIG.force_local %>disabled="" <% end %><% if preferences.local && !CONFIG.disabled?("local") %>checked<% end %> <% if CONFIG.disabled?("local") %>disabled<% end %>>
+                <% if CONFIG.force_local %>
+                    <label for="local">(All videos are proxied by default)</label>
+                <% end %>
             </div>
 
             <div class="pure-control-group">

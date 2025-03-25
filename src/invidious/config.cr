@@ -239,6 +239,8 @@ class Config
 
   property check_backends_interval : Int32 = 30
 
+  property force_local : Bool = true
+
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
   {% end %}

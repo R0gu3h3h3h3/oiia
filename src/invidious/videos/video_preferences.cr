@@ -109,7 +109,9 @@ def process_video_params(query, preferences)
     quality = "high"
   end
 
-  if CONFIG.disabled?("local") && local
+  if CONFIG.force_local
+    local = true
+  elsif CONFIG.disabled?("local") && local
     local = false
   end
 

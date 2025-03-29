@@ -61,6 +61,10 @@ module Invidious::Routes::Watch
       return error_template(500, ex)
     end
 
+    if video.live_now && CONFIG.disable_livestreams
+      return error_template(403, "Livestreams are disabled as they are not working with invidious-companion right now. Please wait until an update comes out!")
+    end
+
     if preferences.annotations_subscribed &&
        subscriptions.includes?(video.ucid) &&
        (env.params.query["iv_load_policy"]? || "1") == "1"

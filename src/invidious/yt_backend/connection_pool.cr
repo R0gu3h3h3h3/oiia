@@ -63,7 +63,7 @@ struct CompanionConnectionPool
     end
   end
 
-  def client(&)
+  def client(env : HTTP::Server::Context | Nil, &)
     conn = pool.checkout
 
     begin
@@ -71,7 +71,13 @@ struct CompanionConnectionPool
     rescue ex
       conn.close
 
-      companion = CONFIG.invidious_companion.sample
+      if env.nil?
+        companion = CONFIG.invidious_companion.sample
+      else
+        current_companion = env.get("current_companion").as(Int32)
+        companion = CONFIG.invidious_companion[current_companion]
+      end
+
       conn = make_client(companion.private_url, use_http_proxy: false)
 
       response = yield conn

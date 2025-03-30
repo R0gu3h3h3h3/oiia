@@ -298,7 +298,7 @@ struct Video
   predicate_bool upcoming, isUpcoming
 end
 
-def get_video(id, refresh = true, region = nil, force_refresh = false)
+def get_video(id, refresh = true, region = nil, force_refresh = false, env : HTTP::Server::Context | Nil = nil)
   if (video = Invidious::Database::Videos.select(id)) && !region
     # If record was last updated over 10 minutes ago, or video has since premiered,
     # refresh (expire param in response lasts for 6 hours)
@@ -308,7 +308,7 @@ def get_video(id, refresh = true, region = nil, force_refresh = false)
        force_refresh ||
        video.schema_version != Video::SCHEMA_VERSION # cache control
       begin
-        video = fetch_video(id, region)
+        video = fetch_video(id, region, env)
         Invidious::Database::Videos.insert(video)
       rescue ex
         Invidious::Database::Videos.delete(id)
@@ -316,7 +316,7 @@ def get_video(id, refresh = true, region = nil, force_refresh = false)
       end
     end
   else
-    video = fetch_video(id, region)
+    video = fetch_video(id, region, env)
     Invidious::Database::Videos.insert(video) if !region
   end
 
@@ -324,11 +324,11 @@ def get_video(id, refresh = true, region = nil, force_refresh = false)
 rescue DB::Error
   # Avoid common `DB::PoolRetryAttemptsExceeded` error and friends
   # Note: All DB errors inherit from `DB::Error`
-  return fetch_video(id, region)
+  return fetch_video(id, region, env)
 end
 
-def fetch_video(id, region)
-  info = extract_video_info(video_id: id)
+def fetch_video(id, region, env)
+  info = extract_video_info(video_id: id, env: env)
 
   if reason = info["reason"]?
     if reason == "Video unavailable"

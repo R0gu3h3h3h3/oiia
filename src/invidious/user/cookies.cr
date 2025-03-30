@@ -45,5 +45,29 @@ struct Invidious::User
         samesite: HTTP::Cookie::SameSite::Lax
       )
     end
+
+    # Backend (CONFIG.server_id_cookie_name) cookie
+    # Parameter "domain" comes from the global config
+    def server_id(domain : String?, server_id : Int32? = nil) : HTTP::Cookie
+      if server_id.nil?
+        server_id = rand(CONFIG.invidious_companion.size)
+      end
+      # Strip the port from the domain if it's being accessed from another port
+      domain = domain.split(":")[0]
+      # Not secure if it's being accessed from I2P
+      # Browsers expect the domain to include https. On I2P there is no HTTPS
+      if domain.not_nil!.split(".").last == "i2p"
+        @@secure = false
+      end
+      return HTTP::Cookie.new(
+        name: CONFIG.server_id_cookie_name,
+        domain: domain,
+        path: "/",
+        value: server_id.to_s,
+        secure: @@secure,
+        http_only: true,
+        samesite: HTTP::Cookie::SameSite::Lax
+      )
+    end
   end
 end

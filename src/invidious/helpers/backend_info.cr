@@ -1,45 +1,49 @@
 module BackendInfo
   extend self
-  @@exvpp_url : String = ""
-  @@status : Int32 = 0
+  @@exvpp_url : Array(String) = Array.new(CONFIG.invidious_companion.size, "")
+  @@status : Array(Int32) = Array.new(CONFIG.invidious_companion.size, 0)
 
   def check_backends
     check_companion()
   end
 
   def check_companion
-    begin
-      response = HTTP::Client.get "#{CONFIG.invidious_companion.sample.private_url}/healthz"
-      if response.status_code == 200
-        check_videoplayback_proxy()
-      else
-        @@status = 0
+    CONFIG.invidious_companion.each_with_index do |companion, index|
+      spawn do
+        begin
+          response = HTTP::Client.get "#{companion.private_url}/healthz"
+          if response.status_code == 200
+            check_videoplayback_proxy(companion, index)
+          else
+            @@status[index] = 0
+          end
+        rescue
+          @@status[index] = 0
+        end
       end
-    rescue
-      @@status = 0
     end
   end
 
-  def check_videoplayback_proxy
+  private def check_videoplayback_proxy(companion : Config::CompanionConfig, index : Int32)
     begin
-      info = HTTP::Client.get "#{CONFIG.invidious_companion.sample.private_url}/info"
+      info = HTTP::Client.get "#{companion.private_url}/info"
       exvpp_url = JSON.parse(info.body)["external_videoplayback_proxy"]?.try &.to_s
       exvpp_url = "" if exvpp_url.nil?
-      @@exvpp_url = exvpp_url
+      @@exvpp_url[index] = exvpp_url
       if exvpp_url.empty?
-        @@status = 2
+        @@status[index] = 2
         return
       else
         begin
           exvpp_health = HTTP::Client.get "#{exvpp_url}/health"
           if exvpp_health.status_code == 200
-            @@status = 2
+            @@status[index] = 2
             return
           else
-            @@status = 1
+            @@status[index] = 1
           end
         rescue
-          @@status = 1
+          @@status[index] = 1
         end
       end
     rescue

@@ -52,7 +52,7 @@ module Invidious::Routes::Watch
     env.params.query.delete_all("listen")
 
     begin
-      video = get_video(id, region: params.region)
+      video = get_video(id, region: params.region, env: env)
     rescue ex : NotFoundException
       LOGGER.error("get_video not found: #{id} : #{ex.message}")
       return error_template(404, ex)
@@ -214,7 +214,8 @@ module Invidious::Routes::Watch
     end
 
     if CONFIG.invidious_companion.present?
-      invidious_companion = CONFIG.invidious_companion.sample
+      current_companion = env.get("current_companion").as(Int32)
+      invidious_companion = CONFIG.invidious_companion[current_companion]
       env.response.headers["Content-Security-Policy"] =
         env.response.headers["Content-Security-Policy"]
           .gsub("media-src", "media-src #{invidious_companion.public_url}")
@@ -350,8 +351,9 @@ module Invidious::Routes::Watch
       env.params.query["local"] = "true"
 
       if (CONFIG.invidious_companion.present?)
-        video = get_video(video_id)
-        invidious_companion = CONFIG.invidious_companion.sample
+        video = get_video(video_id, env: env)
+        current_companion = env.get("current_companion").as(Int32)
+        invidious_companion = CONFIG.invidious_companion[current_companion]
         return env.redirect "#{invidious_companion.public_url}/latest_version?#{env.params.query}"
       else
         return Invidious::Routes::VideoPlayback.latest_version(env)

@@ -24,12 +24,33 @@ module Invidious::Routes::BeforeAll
     extra_connect_csp = ""
 
     if CONFIG.invidious_companion.present?
-      extra_media_csp = " #{CONFIG.invidious_companion.sample.public_url}"
-      extra_connect_csp = " #{CONFIG.invidious_companion.sample.public_url}"
-      exvpp_url = BackendInfo.get_exvpp
-      if !exvpp_url.empty?
-        extra_media_csp += " #{exvpp_url}"
-        extra_connect_csp += " #{exvpp_url}"
+      if env.request.cookies[CONFIG.server_id_cookie_name]?.nil?
+        env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"])
+      end
+
+      begin
+        current_companion = env.request.cookies[CONFIG.server_id_cookie_name].value.try &.to_i
+      rescue
+        current_companion = rand(CONFIG.invidious_companion.size)
+      end
+
+      if current_companion > CONFIG.invidious_companion.size
+        current_companion = current_companion % CONFIG.invidious_companion.size
+        env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"], current_companion)
+      end
+
+      env.set "current_companion", current_companion
+
+      CONFIG.invidious_companion.each do |companion|
+        extra_media_csp += " #{companion.public_url}"
+        extra_connect_csp += " #{companion.public_url}"
+      end
+      exvpp_urls = BackendInfo.get_exvpp
+      exvpp_urls.each do |exvpp_url|
+        if !exvpp_url.empty?
+          extra_media_csp += " #{exvpp_url}"
+          extra_connect_csp += " #{exvpp_url}"
+        end
       end
     end
 

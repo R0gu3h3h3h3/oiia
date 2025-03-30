@@ -58,12 +58,12 @@ def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
   }
 end
 
-def extract_video_info(video_id : String)
+def extract_video_info(video_id : String, env : HTTP::Server::Context | Nil = nil)
   # Init client config for the API
   client_config = YoutubeAPI::ClientConfig.new
 
   # Fetch data from the player endpoint
-  player_response = YoutubeAPI.player(video_id: video_id, params: "2AMB", client_config: client_config)
+  player_response = YoutubeAPI.player(env: env, video_id: video_id, params: "2AMB", client_config: client_config)
 
   playability_status = player_response.dig?("playabilityStatus", "status").try &.as_s
 
@@ -119,7 +119,7 @@ def extract_video_info(video_id : String)
       # following issue for an explanation about decrypted URLs:
       # https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
       client_config.client_type = YoutubeAPI::ClientType::AndroidTestSuite
-      new_player_response = try_fetch_streaming_data(video_id, client_config)
+      new_player_response = try_fetch_streaming_data(video_id, client_config, env)
     end
 
     # Replace player response and reset reason
@@ -154,9 +154,9 @@ def extract_video_info(video_id : String)
   return params
 end
 
-def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig) : Hash(String, JSON::Any)?
+def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig, env : HTTP::Server::Context | Nil = nil) : Hash(String, JSON::Any)?
   LOGGER.debug("try_fetch_streaming_data: [#{id}] Using #{client_config.client_type} client.")
-  response = YoutubeAPI.player(video_id: id, params: "2AMB", client_config: client_config)
+  response = YoutubeAPI.player(video_id: id, params: "2AMB", client_config: client_config, env: env)
 
   playability_status = response["playabilityStatus"]["status"]
   LOGGER.debug("try_fetch_streaming_data: [#{id}] Got playabilityStatus == #{playability_status}.")

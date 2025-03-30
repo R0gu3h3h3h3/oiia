@@ -456,6 +456,7 @@ module YoutubeAPI
     *, # Force the following parameters to be passed by name
     params : String,
     client_config : ClientConfig | Nil = nil,
+    env : HTTP::Server::Context | Nil = nil,
   )
     # Playback context, separate because it can be different between clients
     playback_ctx = {
@@ -492,7 +493,7 @@ module YoutubeAPI
     end
 
     if CONFIG.invidious_companion.present?
-      return self._post_invidious_companion("/youtubei/v1/player", data)
+      return self._post_invidious_companion("/youtubei/v1/player", data, env)
     else
       return self._post_json("/youtubei/v1/player", data, client_config)
     end
@@ -673,6 +674,7 @@ module YoutubeAPI
   def _post_invidious_companion(
     endpoint : String,
     data : Hash,
+    env : HTTP::Server::Context | Nil,
   ) : Hash(String, JSON::Any)
     headers = HTTP::Headers{
       "Content-Type"  => "application/json; charset=UTF-8",
@@ -686,7 +688,7 @@ module YoutubeAPI
     # Send the POST request
 
     begin
-      response = COMPANION_POOL.client &.post(endpoint, headers: headers, body: data.to_json)
+      response = COMPANION_POOL.client(env, &.post(endpoint, headers: headers, body: data.to_json))
       body = response.body
       if (response.status_code != 200)
         raise Exception.new(

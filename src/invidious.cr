@@ -224,6 +224,8 @@ end
 
 if CONFIG.invidious_companion.present?
   Invidious::Jobs.register Invidious::Jobs::CheckBackend.new
+else
+  LOGGER.info("jobs: Disabling CheckBackend job. invidious-companion and their respective external video playback proxies (if set on invidious-companion) will not be checked")
 end
 
 Invidious::Jobs.start_all

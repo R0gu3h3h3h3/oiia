@@ -123,10 +123,6 @@ class Config
   property domain : String?
   # Materialious redirects
   property materialious_domain : String?
-  # Alternative domains. You can add other domains, like TOR and I2P addresses
-  property alternative_domains : Array(String) = [] of String
-  # Backend domains. Domains for numbered backends
-  property backend_domains : Array(String) = [] of String
 
   # Subscribe to channels using PubSubHubbub (requires domain, hmac_key)
   property use_pubsub_feeds : Bool | Int32 = false

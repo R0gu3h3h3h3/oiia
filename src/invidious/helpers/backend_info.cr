@@ -2,12 +2,15 @@ module BackendInfo
   extend self
   @@exvpp_url : Array(String) = Array.new(CONFIG.invidious_companion.size, "")
   @@status : Array(Int32) = Array.new(CONFIG.invidious_companion.size, 0)
+  @@extra_media_csp : String = ""
+  @@extra_connect_csp : String = ""
 
   def check_backends
     check_companion()
+    generate_csp()
   end
 
-  def check_companion
+  private def check_companion
     CONFIG.invidious_companion.each_with_index do |companion, index|
       spawn do
         begin
@@ -50,11 +53,32 @@ module BackendInfo
     end
   end
 
+  private def generate_csp
+    @@extra_media_csp = ""
+    @@extra_connect_csp = ""
+
+    CONFIG.invidious_companion.each do |companion|
+      @@extra_media_csp += " #{companion.public_url}"
+      @@extra_connect_csp += " #{companion.public_url}"
+    end
+    exvpp_urls = self.get_exvpp
+    exvpp_urls.each do |exvpp_url|
+      if !exvpp_url.empty?
+        @@extra_media_csp += " #{exvpp_url}"
+        @@extra_connect_csp += " #{exvpp_url}"
+      end
+    end
+  end
+
   def get_status
     return @@status
   end
 
   def get_exvpp
     return @@exvpp_url
+  end
+
+  def get_csp
+    return @@extra_media_csp, @@extra_connect_csp
   end
 end

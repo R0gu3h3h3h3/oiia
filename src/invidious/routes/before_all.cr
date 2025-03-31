@@ -41,17 +41,7 @@ module Invidious::Routes::BeforeAll
 
       env.set "current_companion", current_companion
 
-      CONFIG.invidious_companion.each do |companion|
-        extra_media_csp += " #{companion.public_url}"
-        extra_connect_csp += " #{companion.public_url}"
-      end
-      exvpp_urls = BackendInfo.get_exvpp
-      exvpp_urls.each do |exvpp_url|
-        if !exvpp_url.empty?
-          extra_media_csp += " #{exvpp_url}"
-          extra_connect_csp += " #{exvpp_url}"
-        end
-      end
+      extra_media_csp, extra_connect_csp = BackendInfo.get_csp()
     end
 
     if !CONFIG.external_videoplayback_proxy.empty?

@@ -84,6 +84,7 @@ class Config
     property public_url : URI = URI.parse("")
 
     property note : String = ""
+    property domain : String = ""
   end
 
   # Number of threads to use for crawling videos from channels (for updating subscriptions)

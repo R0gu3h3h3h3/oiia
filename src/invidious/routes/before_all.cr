@@ -24,24 +24,34 @@ module Invidious::Routes::BeforeAll
     extra_connect_csp = ""
 
     if CONFIG.invidious_companion.present?
-      if env.request.cookies[CONFIG.server_id_cookie_name]?.nil?
-        env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"])
+      CONFIG.invidious_companion.each_with_index do |companion, index|
+        if companion.domain == env.request.headers["Host"]
+          env.set "current_companion", index
+          env.set "domain", true
+          break
+        end
       end
 
-      begin
-        current_companion = env.request.cookies[CONFIG.server_id_cookie_name].value.try &.to_i
-      rescue
-        current_companion = rand(CONFIG.invidious_companion.size)
+      if env.get?("current_companion").try &.as(Int32) == nil
+        if !env.request.cookies[CONFIG.server_id_cookie_name]?
+          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"])
+        end
+
+        begin
+          current_companion = env.request.cookies[CONFIG.server_id_cookie_name].value.try &.to_i
+        rescue
+          current_companion = rand(CONFIG.invidious_companion.size)
+        end
+
+        if current_companion > CONFIG.invidious_companion.size
+          current_companion = current_companion % CONFIG.invidious_companion.size
+          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"], current_companion)
+        end
+
+        env.set "current_companion", current_companion
       end
 
-      if current_companion > CONFIG.invidious_companion.size
-        current_companion = current_companion % CONFIG.invidious_companion.size
-        env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"], current_companion)
-      end
-
-      env.set "current_companion", current_companion
-
-      extra_media_csp, extra_connect_csp = BackendInfo.get_csp()
+      extra_media_csp, extra_connect_csp = BackendInfo.get_csp
     end
 
     if !CONFIG.external_videoplayback_proxy.empty?

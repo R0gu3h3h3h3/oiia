@@ -117,7 +117,7 @@
 					<% CONFIG.invidious_companion.each_with_index do | backend, index | %>
 						<% if current_backend == index %>
 							<a href="/switchbackend?backend_id=<%= index.to_s %>" style="text-decoration-line: underline; display: inline-block;">
-								Backend<%= HTML.escape((index+1).to_s) %>
+								Backend<%= HTML.escape((index+1).to_s) %> <%= HTML.escape(backend.note) %>
 								<span style="color:
 								<% if status[index] == 0 %> #fd4848; <% end %>
 								<% if status[index] == 1 %> #d06925; <% end %>
@@ -125,7 +125,7 @@
 								">•</span>
 						<% else %>
 							<a href="/switchbackend?backend_id=<%= index.to_s %>" style="display: inline-block;">
-								Backend<%= HTML.escape((index+1).to_s) %>
+								Backend<%= HTML.escape((index+1).to_s) %> <%= HTML.escape(backend.note) %>
 								<span style="color:
 								<% if status[index] == 0 %> #fd4848; <% end %>
 								<% if status[index] == 1 %> #d06925; <% end %>

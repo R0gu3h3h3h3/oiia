@@ -11,6 +11,10 @@ struct Invidious::User
     # Session ID (SID) cookie
     # Parameter "domain" comes from the global config
     def sid(domain : String?, sid) : HTTP::Cookie
+      # Strip the port from the domain if it's being accessed from another port
+      # Browsers will reject the cookie if it contains the port number. This is
+      # because `example.com:3000` is not the same as `example.com` on a cookie.
+      domain = domain.split(":")[0]
       # Not secure if it's being accessed from I2P
       # Browsers expect the domain to include https. On I2P there is no HTTPS
       if domain.not_nil!.split(".").last == "i2p"
@@ -30,6 +34,10 @@ struct Invidious::User
     # Preferences (PREFS) cookie
     # Parameter "domain" comes from the global config
     def prefs(domain : String?, preferences : Preferences) : HTTP::Cookie
+      # Strip the port from the domain if it's being accessed from another port
+      # Browsers will reject the cookie if it contains the port number. This is
+      # because `example.com:3000` is not the same as `example.com` on a cookie.
+      domain = domain.split(":")[0]
       # Not secure if it's being accessed from I2P
       # Browsers expect the domain to include https. On I2P there is no HTTPS
       if domain.not_nil!.split(".").last == "i2p"
@@ -53,6 +61,8 @@ struct Invidious::User
         server_id = rand(CONFIG.invidious_companion.size)
       end
       # Strip the port from the domain if it's being accessed from another port
+      # Browsers will reject the cookie if it contains the port number. This is
+      # because `example.com:3000` is not the same as `example.com` on a cookie.
       domain = domain.split(":")[0]
       # Not secure if it's being accessed from I2P
       # Browsers expect the domain to include https. On I2P there is no HTTPS

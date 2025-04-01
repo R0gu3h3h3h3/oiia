@@ -204,11 +204,8 @@ module Invidious::Routes::Embed
     end
 
     if CONFIG.invidious_companion.present?
-      invidious_companion = CONFIG.invidious_companion.sample
-      env.response.headers["Content-Security-Policy"] =
-        env.response.headers["Content-Security-Policy"]
-          .gsub("media-src", "media-src #{invidious_companion.public_url}")
-          .gsub("connect-src", "connect-src #{invidious_companion.public_url}")
+      current_companion = env.get("current_companion").as(Int32)
+      invidious_companion = CONFIG.invidious_companion[current_companion]
     end
 
     rendered "embed"

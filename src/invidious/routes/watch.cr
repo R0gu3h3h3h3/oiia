@@ -216,10 +216,6 @@ module Invidious::Routes::Watch
     if CONFIG.invidious_companion.present?
       current_companion = env.get("current_companion").as(Int32)
       invidious_companion = CONFIG.invidious_companion[current_companion]
-      env.response.headers["Content-Security-Policy"] =
-        env.response.headers["Content-Security-Policy"]
-          .gsub("media-src", "media-src #{invidious_companion.public_url}")
-          .gsub("connect-src", "connect-src #{invidious_companion.public_url}")
     end
 
     templated "watch"

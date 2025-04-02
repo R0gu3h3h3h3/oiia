@@ -183,6 +183,8 @@ def error_redirect_helper(env : HTTP::Server::Context)
     go_to_youtube_embed = translate(locale, "videoinfo_youTube_embed_link")
     switch_instance = translate(locale, "Switch Invidious Instance")
 
+    show_embed_link = "(<a rel=\"noreferrer noopener\" href=\"https://youtube.com/embed/#{env.params.query["v"]}\">#{go_to_youtube_embed}</a>)" if env.params.query["v"]?
+
     return <<-END_HTML
       <p style="margin-bottom: 4px;">#{next_steps_text}</p>
       <ul>
@@ -194,7 +196,7 @@ def error_redirect_helper(env : HTTP::Server::Context)
         </li>
         <li>
           <a rel="noreferrer noopener" href="https://youtube.com#{env.request.resource}">#{go_to_youtube}</a>
-          (<a rel="noreferrer noopener" href="https://youtube.com/embed/#{env.params.query["v"]}">#{go_to_youtube_embed}</a>)
+          #{show_embed_link}
         </li>
       </ul>
     END_HTML

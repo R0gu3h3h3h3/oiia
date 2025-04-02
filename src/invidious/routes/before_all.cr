@@ -51,7 +51,7 @@ module Invidious::Routes::BeforeAll
         env.set "current_companion", current_companion
       end
 
-      extra_media_csp, extra_connect_csp = BackendInfo.get_csp
+      extra_media_csp, extra_connect_csp = BackendInfo.get_csp(env.get("current_companion").as(Int32))
     end
 
     if !CONFIG.external_videoplayback_proxy.empty?

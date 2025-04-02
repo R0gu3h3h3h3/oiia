@@ -2,12 +2,11 @@ module BackendInfo
   extend self
   @@exvpp_url : Array(String) = Array.new(CONFIG.invidious_companion.size, "")
   @@status : Array(Int32) = Array.new(CONFIG.invidious_companion.size, 0)
-  @@extra_media_csp : String = ""
-  @@extra_connect_csp : String = ""
+  @@csp : Array(String) = Array.new(CONFIG.invidious_companion.size, "")
+  @@mutex : Mutex = Mutex.new
 
   def check_backends
     check_companion()
-    generate_csp()
   end
 
   private def check_companion
@@ -17,6 +16,7 @@ module BackendInfo
           response = HTTP::Client.get "#{companion.private_url}/healthz"
           if response.status_code == 200
             check_videoplayback_proxy(companion, index)
+            generate_csp(companion.public_url.to_s, @@exvpp_url[index], index)
           else
             @@status[index] = 0
           end
@@ -41,7 +41,7 @@ module BackendInfo
           exvpp_health = HTTP::Client.get "#{exvpp_url}/health"
           if exvpp_health.status_code == 200
             @@status[index] = 2
-            return
+            return exvpp_url
           else
             @@status[index] = 1
           end
@@ -53,20 +53,9 @@ module BackendInfo
     end
   end
 
-  private def generate_csp
-    @@extra_media_csp = ""
-    @@extra_connect_csp = ""
-
-    CONFIG.invidious_companion.each do |companion|
-      @@extra_media_csp += " #{companion.public_url}"
-      @@extra_connect_csp += " #{companion.public_url}"
-    end
-    exvpp_urls = self.get_exvpp
-    exvpp_urls.each do |exvpp_url|
-      if !exvpp_url.empty?
-        @@extra_media_csp += " #{exvpp_url}"
-        @@extra_connect_csp += " #{exvpp_url}"
-      end
+  private def generate_csp(companion_url : String, exvpp_url : String, index : Int32)
+    @@mutex.synchronize do
+      @@csp[index] = " #{companion_url} #{exvpp_url}"
     end
   end
 
@@ -78,7 +67,12 @@ module BackendInfo
     return @@exvpp_url
   end
 
-  def get_csp
-    return @@extra_media_csp, @@extra_connect_csp
+  def get_csp(index : Int32)
+    # A little mutex to prevent sending a partial CSP header
+    # Not sure if this is necessary. But if the @@csp[index] is being assigned
+    # at the same time when it's being accessed, a data race will appear
+    @@mutex.synchronize do
+      return @@csp[index], @@csp[index]
+    end
   end
 end

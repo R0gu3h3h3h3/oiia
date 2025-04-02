@@ -49,7 +49,7 @@ end
 struct CompanionConnectionPool
   property pool : DB::Pool(HTTP::Client)
 
-  def initialize(capacity = 5, timeout = 5.0)
+  def initialize(companion, capacity = 5, timeout = 5.0)
     options = DB::Pool::Options.new(
       initial_pool_size: 0,
       max_pool_size: capacity,
@@ -58,12 +58,11 @@ struct CompanionConnectionPool
     )
 
     @pool = DB::Pool(HTTP::Client).new(options) do
-      companion = CONFIG.invidious_companion.sample
       next make_client(companion.private_url, use_http_proxy: false)
     end
   end
 
-  def client(env : HTTP::Server::Context | Nil, &)
+  def client(&)
     conn = pool.checkout
 
     begin
@@ -71,14 +70,10 @@ struct CompanionConnectionPool
     rescue ex
       conn.close
 
-      if env.nil?
-        companion = CONFIG.invidious_companion.sample
-      else
-        current_companion = env.get("current_companion").as(Int32)
-        companion = CONFIG.invidious_companion[current_companion]
-      end
+      scheme = "https" if conn.tls || "http"
+      same_companion = "#{scheme}://#{conn.host}:#{conn.port}"
 
-      conn = make_client(companion.private_url, use_http_proxy: false)
+      conn = make_client(URI.parse(same_companion), use_http_proxy: false)
 
       response = yield conn
     ensure

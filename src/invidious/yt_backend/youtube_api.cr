@@ -688,7 +688,12 @@ module YoutubeAPI
     # Send the POST request
 
     begin
-      response = COMPANION_POOL.client(env, &.post(endpoint, headers: headers, body: data.to_json))
+      if env.nil?
+        current_companion = rand(CONFIG.invidious_companion.size)
+      else
+        current_companion = env.get("current_companion").as(Int32)
+      end
+      response = COMPANION_POOL[current_companion].client &.post(endpoint, headers: headers, body: data.to_json)
       body = response.body
       if (response.status_code != 200)
         raise Exception.new(

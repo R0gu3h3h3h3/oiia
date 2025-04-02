@@ -113,9 +113,11 @@ YT_POOL = YoutubeConnectionPool.new(YT_URL, capacity: CONFIG.pool_size)
 
 GGPHT_POOL = YoutubeConnectionPool.new(URI.parse("https://yt3.ggpht.com"), capacity: CONFIG.pool_size)
 
-COMPANION_POOL = CompanionConnectionPool.new(
-  capacity: CONFIG.pool_size
-)
+COMPANION_POOL = [] of CompanionConnectionPool
+
+CONFIG.invidious_companion.each do |companion|
+  COMPANION_POOL << CompanionConnectionPool.new(companion, capacity: CONFIG.pool_size)
+end
 
 # CLI
 Kemal.config.extra_options do |parser|

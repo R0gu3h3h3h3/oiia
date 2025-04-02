@@ -109,7 +109,7 @@
 
 				<%
 					if CONFIG.invidious_companion.present?
-					current_backend = env.get("current_companion").as(Int32)
+					current_backend = env.get?("current_companion").try &.as(Int32)
 					domain = env.get?("domain").try &.as(Bool)
 					status = BackendInfo.get_status
 				%>
@@ -333,9 +333,9 @@
 			<div class="footer-footer">
 			<%
 				if CONFIG.invidious_companion.present?
-				current_backend = env.get("current_companion").as(Int32)
+				current_backend = env.get?("current_companion").try &.as(Int32)
 			%>
-			<div class="box">You are currently using Backend: <%= CONFIG.invidious_companion[current_backend].public_url %></div>
+			<div class="box">You are currently using Backend: <%= current_backend ? CONFIG.invidious_companion[current_backend].public_url : "Unable to get backend, this is bug, please report it!" %></div>
 			<% end %>
 			<% if !current_external_videoplayback_proxy.empty? %>
 			<div class="box">External Videoplayback Proxy: <%= current_external_videoplayback_proxy %></div>

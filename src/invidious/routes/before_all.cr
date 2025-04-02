@@ -76,11 +76,12 @@ module Invidious::Routes::BeforeAll
 
     # TODO: Remove style-src's 'unsafe-inline', requires to remove all
     # inline styles (<style> [..] </style>, style=" [..] ")
+    scheme = env.request.headers["X-Forwarded-Proto"]? || ("https" if CONFIG.https_only) || "http"
     env.response.headers["Content-Security-Policy"] = {
       "default-src 'none'",
       "script-src 'self'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: " + HOST_URL,
+      "img-src 'self' data: " + "#{scheme}://#{env.request.headers["Host"]?}",
       "font-src 'self' data:",
       "connect-src 'self'" + extra_connect_csp,
       "manifest-src 'self'",

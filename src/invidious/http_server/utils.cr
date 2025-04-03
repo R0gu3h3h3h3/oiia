@@ -4,30 +4,6 @@ module Invidious::HttpServer
   module Utils
     extend self
 
-    @@proxy_alive : String = ""
-
-    def check_external_proxy
-      CONFIG.external_videoplayback_proxy.each do |proxy|
-        begin
-          response = HTTP::Client.get("#{proxy}/health")
-          if response.status_code == 200
-            @@proxy_alive = proxy
-            LOGGER.debug("CheckExternalProxy: Proxy set to: '#{proxy}'")
-            break
-          end
-        rescue
-          LOGGER.debug("CheckExternalProxy: Proxy '#{proxy}' is not available")
-        end
-      end
-      if @@proxy_alive.empty?
-        LOGGER.warn("CheckExternalProxy: No proxies alive! Using own server proxy")
-      end
-    end
-
-    def get_external_proxy
-      return @@proxy_alive
-    end
-
     def proxy_video_url(raw_url : String, *, region : String? = nil, absolute : Bool = false)
       url = URI.parse(raw_url)
 
@@ -38,11 +14,7 @@ module Invidious::HttpServer
       url.query_params = params
 
       if absolute
-        if !@@proxy_alive.empty?
-          return "#{@@proxy_alive}#{url.request_target}"
-        else
-          return "#{HOST_URL}#{url.request_target}"
-        end
+        return "#{HOST_URL}#{url.request_target}"
       else
         return url.request_target
       end

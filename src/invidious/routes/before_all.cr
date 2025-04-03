@@ -54,13 +54,6 @@ module Invidious::Routes::BeforeAll
       extra_media_csp, extra_connect_csp = BackendInfo.get_csp(env.get("current_companion").as(Int32))
     end
 
-    if !CONFIG.external_videoplayback_proxy.empty?
-      CONFIG.external_videoplayback_proxy.each do |proxy|
-        extra_media_csp += " #{proxy}"
-        extra_connect_csp += " #{proxy}"
-      end
-    end
-
     # Allow media resources to be loaded from google servers
     # TODO: check if *.youtube.com can be removed
     if CONFIG.disabled?("local") || !preferences.local

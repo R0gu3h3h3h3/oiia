@@ -222,19 +222,13 @@ module Invidious::Routes::API::Manifest
 
         raw_params["host"] = uri.host.not_nil!
 
-        proxy = Invidious::HttpServer::Utils.get_external_proxy
-
         if CONFIG.https_only
           scheme = "https://"
         else
           scheme = "http://"
         end
 
-        if !proxy.empty?
-          "#{proxy}/videoplayback?#{raw_params}"
-        else
-          "#{scheme}#{env.request.headers["Host"]}/videoplayback?#{raw_params}"
-        end
+        "#{scheme}#{env.request.headers["Host"]}/videoplayback?#{raw_params}"
       end
     end
 

@@ -1,7 +1,6 @@
 <%
 	locale = env.get("preferences").as(Preferences).locale
 	dark_mode = env.get("preferences").as(Preferences).dark_mode
-    current_external_videoplayback_proxy = Invidious::HttpServer::Utils.get_external_proxy()
 %>
 <!DOCTYPE html>
 <html lang="<%= locale %>">
@@ -336,9 +335,6 @@
 				current_backend = env.get?("current_companion").try &.as(Int32)
 			%>
 			<div class="box">You are currently using Backend: <%= current_backend ? CONFIG.invidious_companion[current_backend].public_url : "Unable to get backend, this is bug, please report it!" %></div>
-			<% end %>
-			<% if !current_external_videoplayback_proxy.empty? %>
-			<div class="box">External Videoplayback Proxy: <%= current_external_videoplayback_proxy %></div>
 			<% end %>
 				<span class="left">
 					<% if CONFIG.modified_source_code_url %>

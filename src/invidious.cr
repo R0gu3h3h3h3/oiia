@@ -210,14 +210,6 @@ Invidious::Jobs.register Invidious::Jobs::ClearExpiredItemsJob.new
 
 Invidious::Jobs.register Invidious::Jobs::InstanceListRefreshJob.new
 
-if !CONFIG.external_videoplayback_proxy.empty?
-  Invidious::Jobs.register Invidious::Jobs::CheckExternalProxy.new
-else
-  # Invidious will it's own videoplayback proxy unless the admin decides to rewrite
-  # the /videoplayback location in the reverse proxy configuration (NGINX, Caddy, etc)
-  LOGGER.info("jobs: Disabling CheckExternalProxy job. Invidious will it's own videoplayback proxy")
-end
-
 if !CONFIG.tokens_server.empty?
   Invidious::Jobs.register Invidious::Jobs::RefreshSessionTokens.new
 else

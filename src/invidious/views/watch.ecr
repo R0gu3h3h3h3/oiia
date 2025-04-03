@@ -2,31 +2,32 @@
 <% title = HTML.escape(video.title) %>
 <% author = HTML.escape(video.author) %>
 <% host = env.request.headers["Host"] %>
+<% scheme = env.get("scheme") %>
 
 
 <% content_for "header" do %>
-<meta name="thumbnail" content="<%= thumbnail %>">
+<meta name="thumbnail" content="<%= scheme %>://<%= host %><%= thumbnail %>">
 <meta name="description" content="<%= HTML.escape(video.short_description) %>">
 <meta name="keywords" content="<%= video.keywords.join(",") %>">
 <meta property="og:site_name" content="<%= author %> | Invidious">
-<meta property="og:url" content="<%= host %>/watch?v=<%= video.id %>">
+<meta property="og:url" content="<%= scheme %>://<%= host %>/watch?v=<%= video.id %>">
 <meta property="og:title" content="<%= title %>">
-<meta property="og:image" content="<%= host %>/vi/<%= video.id %>/maxres.jpg">
+<meta property="og:image" content="<%= scheme %>://<%= host %>/vi/<%= video.id %>/maxres.jpg">
 <meta property="og:description" content="<%= HTML.escape(video.short_description) %>">
 <meta property="og:type" content="video.other">
 <!-- This shouldn't be empty, ever. -->
-<meta property="og:video" content="<%= video_url %>"> 
+<meta property="og:video" content="<%= video_url %>">
 <meta property="og:video:url" content="<%= video_url %>">
 <meta property="og:video:secure_url" content="<%= video_url %>">
 <meta property="og:video:type" content="video/mp4">
 <meta property="og:video:width" content="640">
 <meta property="og:video:height" content="360">
 <meta name="twitter:card" content="player">
-<meta name="twitter:url" content="<%= host %>/watch?v=<%= video.id %>">
+<meta name="twitter:url" content="<%= scheme %>://<%= host %>/watch?v=<%= video.id %>">
 <meta name="twitter:title" content="<%= title %>">
 <meta name="twitter:description" content="<%= HTML.escape(video.short_description) %>">
-<meta name="twitter:image" content="<%= host %>/vi/<%= video.id %>/maxres.jpg">
-<meta name="twitter:player" content="<%= host %>/embed/<%= video.id %>">
+<meta name="twitter:image" content="<%= scheme %>://<%= host %>/vi/<%= video.id %>/maxres.jpg">
+<meta name="twitter:player" content="<%= scheme %>://<%= host %>/embed/<%= video.id %>">
 <meta name="twitter:player:width" content="1280">
 <meta name="twitter:player:height" content="720">
 <link rel="alternate" href="https://www.youtube.com/watch?v=<%= video.id %>">

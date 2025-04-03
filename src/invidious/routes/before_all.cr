@@ -67,9 +67,11 @@ module Invidious::Routes::BeforeAll
       frame_ancestors = "'none'"
     end
 
+    scheme = env.request.headers["X-Forwarded-Proto"]? || ("https" if CONFIG.https_only) || "http"
+    env.set "scheme", scheme
+
     # TODO: Remove style-src's 'unsafe-inline', requires to remove all
     # inline styles (<style> [..] </style>, style=" [..] ")
-    scheme = env.request.headers["X-Forwarded-Proto"]? || ("https" if CONFIG.https_only) || "http"
     env.response.headers["Content-Security-Policy"] = {
       "default-src 'none'",
       "script-src 'self'",

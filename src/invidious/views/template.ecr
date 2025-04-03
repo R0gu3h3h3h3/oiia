@@ -110,6 +110,7 @@
 					if CONFIG.invidious_companion.present?
 					current_backend = env.get?("current_companion").try &.as(Int32)
 					domain = env.get?("domain").try &.as(Bool)
+					scheme = env.get("scheme")
 					status = BackendInfo.get_status
 				%>
 				<div class="h-box" style="margin-bottom: 10px;">
@@ -117,7 +118,6 @@
 					<% if domain %>
 						<% CONFIG.invidious_companion.each_with_index do | companion, index | %>
 							<% is_current_backend_host = companion.domain == env.request.headers["Host"] %>
-							<% scheme = env.request.headers["X-Forwarded-Proto"]? || ("https" if CONFIG.https_only) || "http" %>
 							<a href="<%= scheme %>://<%= companion.domain %><%= env.request.resource %>" style="<%= is_current_backend_host ? "text-decoration-line: underline;" : "" %> display: inline-block;">
 								Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
 								<span style="color:

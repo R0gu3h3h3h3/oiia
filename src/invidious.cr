@@ -160,6 +160,15 @@ LOGGER = Invidious::LogHandler.new(OUTPUT, CONFIG.log_level, CONFIG.colorize_log
 # Check table integrity
 Invidious::Database.check_integrity(CONFIG)
 
+# Minifies Invidious Javascript
+{% if flag?(:minify_debug) || (flag?(:release) || flag?(:production)) && !flag?(:skip_minified_js) %}
+  {% puts "\nMinifying Invidious JavaScript\n" %}
+  {% puts run("../scripts/minify-js.cr").stringify %}
+  JS_PATH="js/minified"
+{% else %}
+  JS_PATH="js"
+{% end %}
+
 {% if !flag?(:skip_videojs_download) %}
   # Resolve player dependencies. This is done at compile time.
   #

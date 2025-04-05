@@ -348,9 +348,8 @@ module Invidious::Routes::Watch
 
       if (CONFIG.invidious_companion.present?)
         video = get_video(video_id, env: env)
-        current_companion = env.get("current_companion").as(Int32)
-        invidious_companion = CONFIG.invidious_companion[current_companion]
-        return env.redirect "#{invidious_companion.public_url}/latest_version?#{env.params.query}"
+        companion_public_url = env.get("companion_public_url").as(String)
+        return env.redirect "#{companion_public_url}/latest_version?#{env.params.query}"
       else
         return Invidious::Routes::VideoPlayback.latest_version(env)
       end

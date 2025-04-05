@@ -25,11 +25,19 @@ module Invidious::Routes::BeforeAll
 
     if CONFIG.invidious_companion.present?
       CONFIG.invidious_companion.each_with_index do |companion, index|
-        if companion.domain == env.request.headers["Host"]
-          env.set "current_companion", index
-          env.set "domain", true
-          break
+        if companion.domain.each_with_index do |domain, domain_index|
+             if domain == env.request.headers["Host"]
+               env.set "current_companion", index
+               env.set "companion_public_url", companion.public_url.to_s
+               env.set "domain_index", domain_index
+               if domain_index == 2
+                 env.set "companion_public_url", companion.i2p_public_url.to_s
+               end
+               break
+             end
+           end
         end
+        break if env.get?("current_companion")
       end
 
       if env.get?("current_companion").try &.as(Int32) == nil
@@ -49,6 +57,7 @@ module Invidious::Routes::BeforeAll
         end
 
         env.set "current_companion", current_companion
+        env.set "companion_public_url", CONFIG.invidious_companion[current_companion].public_url.to_s
       end
 
       extra_media_csp, extra_connect_csp = BackendInfo.get_csp(env.get("current_companion").as(Int32))

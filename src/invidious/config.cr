@@ -83,8 +83,11 @@ class Config
     @[YAML::Field(converter: Preferences::URIConverter)]
     property public_url : URI = URI.parse("")
 
+    @[YAML::Field(converter: Preferences::URIConverter)]
+    property i2p_public_url : URI = URI.parse("")
+
     property note : String = ""
-    property domain : String = ""
+    property domain : Array(String) = [] of String
   end
 
   # Number of threads to use for crawling videos from channels (for updating subscriptions)

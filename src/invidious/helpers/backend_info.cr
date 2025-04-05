@@ -16,7 +16,7 @@ module BackendInfo
           response = HTTP::Client.get "#{companion.private_url}/healthz"
           if response.status_code == 200
             check_videoplayback_proxy(companion, index)
-            generate_csp(companion.public_url.to_s, @@exvpp_url[index], index)
+            generate_csp([companion.public_url.to_s, companion.i2p_public_url.to_s], @@exvpp_url[index], index)
           else
             @@status[index] = 0
           end
@@ -31,31 +31,38 @@ module BackendInfo
     begin
       info = HTTP::Client.get "#{companion.private_url}/info"
       exvpp_url = JSON.parse(info.body)["external_videoplayback_proxy"]?.try &.to_s
-      exvpp_url = "" if exvpp_url.nil?
-      @@exvpp_url[index] = exvpp_url
-      if exvpp_url.empty?
-        @@status[index] = 2
-        return
-      else
-        begin
-          exvpp_health = HTTP::Client.get "#{exvpp_url}/health"
-          if exvpp_health.status_code == 200
-            @@status[index] = 2
-            return exvpp_url
-          else
-            @@status[index] = 1
-          end
-        rescue
+    rescue JSON::ParseException
+      @@status[index] = 2
+      return
+    end
+
+    exvpp_url = "" if exvpp_url.nil?
+    @@exvpp_url[index] = exvpp_url
+    if exvpp_url.empty?
+      @@status[index] = 2
+      return
+    else
+      begin
+        exvpp_health = HTTP::Client.get "#{exvpp_url}/health"
+        if exvpp_health.status_code == 200
+          @@status[index] = 2
+          return exvpp_url
+        else
           @@status[index] = 1
         end
+      rescue
+        @@status[index] = 1
       end
-    rescue
     end
   end
 
-  private def generate_csp(companion_url : String, exvpp_url : String, index : Int32)
+  private def generate_csp(companion_url : Array(String), exvpp_url : String? = nil, index : Int32? = nil)
     @@mutex.synchronize do
-      @@csp[index] = " #{companion_url} #{exvpp_url}"
+      @@csp[index] = ""
+      companion_url.each do |url|
+        @@csp[index] += " #{url}"
+      end
+      @@csp[index] += " #{exvpp_url}"
     end
   end
 

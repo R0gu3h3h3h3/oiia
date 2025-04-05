@@ -9,9 +9,8 @@ module Invidious::Routes::API::Manifest
     region = env.params.query["region"]?
 
     if CONFIG.invidious_companion.present?
-      current_companion = env.get("current_companion").as(Int32)
-      invidious_companion = CONFIG.invidious_companion[current_companion]
-      return env.redirect "#{invidious_companion.public_url}/api/manifest/dash/id/#{id}?#{env.params.query}"
+      companion_public_url = env.get("companion_public_url").as(String)
+      return env.redirect "#{companion_public_url}/api/manifest/dash/id/#{id}?#{env.params.query}"
     end
 
     # Since some implementations create playlists based on resolution regardless of different codecs,

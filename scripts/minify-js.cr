@@ -61,6 +61,7 @@ files_to_minify = [
   "playlist_widget.js",
   "post.js",
   "sse.js",
+  "subscribe_widget.js",
   "themes.js",
   "watch.js",
   "player.js",

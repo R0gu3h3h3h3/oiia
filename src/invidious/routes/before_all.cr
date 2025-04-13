@@ -49,7 +49,12 @@ module Invidious::Routes::BeforeAll
         end
 
         env.set "current_companion", current_companion
-        env.set "companion_public_url", CONFIG.invidious_companion[current_companion].public_url.to_s
+
+        if host.split(".").last == "i2p"
+          env.set "companion_public_url", CONFIG.invidious_companion[current_companion].i2p_public_url.to_s
+        else
+          env.set "companion_public_url", CONFIG.invidious_companion[current_companion].public_url.to_s
+        end
       end
 
       extra_media_csp, extra_connect_csp = BackendInfo.get_csp(env.get("current_companion").as(Int32))

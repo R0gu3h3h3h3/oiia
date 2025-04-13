@@ -220,7 +220,7 @@ class Config
 
   property pubsub_domain : String = ""
 
-  property server_id_cookie_name : String = "INVIDIOUS_SERVER_ID"
+  property server_id_cookie_name : String = "COMPANION_ID"
 
   property tokens_server : String = ""
 

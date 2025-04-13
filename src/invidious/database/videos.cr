@@ -103,11 +103,7 @@ module Invidious::Database::Videos
         @redis = Redis::Client.new(CONFIG.redis_url)
         LOGGER.info "Video Cache: Using Redis compatible DB to store video cache"
         LOGGER.info "Connecting to Redis compatible DB"
-        # #ping method is not available in this Redis library
-        # https://github.com/jgaskins/redis/issues/53
-        # if @redis.ping
-        if @redis.run({"PING"}) == "PONG"
-          # LOGGER.info "Connected to Redis compatible DB via unix domain socket at '#{CONFIG.redis_socket}'" if CONFIG.redis_socket
+        if @redis.ping
           LOGGER.info "Connected to Redis compatible DB at '#{CONFIG.redis_url}'" if CONFIG.redis_url
         end
       end

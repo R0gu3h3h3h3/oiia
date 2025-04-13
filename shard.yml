@@ -25,7 +25,7 @@ dependencies:
     github: athena-framework/negotiation
     version: ~> 0.1.1
   redis:
-    github: stefanwille/crystal-redis
+    github: jgaskins/redis
   inotify:
     github: petoem/inotify.cr
     version: 1.0.3

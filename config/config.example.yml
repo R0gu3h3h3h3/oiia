@@ -1072,8 +1072,7 @@ default_user_preferences:
   ##
   #extend_desc: false
 
-# redis_url: 127.0.0.1:6379
-# redis_socket: /var/run/valkey/valkey.sock
+# redis_url: redis://127.0.0.1:6379/0?initial_pool_size=1&max_pool_size=10&checkout_timeout=10&retry_attempts=2&retry_delay=0.5&max_idle_pool_size=50
 # donation_url: "https://example.com/donate"
 # contact_url: "https://example.com/contact"
 # home_domain: "https://example.com/

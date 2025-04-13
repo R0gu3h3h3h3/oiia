@@ -97,21 +97,24 @@ module Invidious::Database::Videos
     end
 
     class Redis_
-      @redis : Redis::PooledClient
+      @redis : Redis::Client
 
       def initialize
-        @redis = Redis::PooledClient.new(unixsocket: CONFIG.redis_socket || nil, url: CONFIG.redis_url || nil)
+        @redis = Redis::Client.new(CONFIG.redis_url)
         LOGGER.info "Video Cache: Using Redis compatible DB to store video cache"
         LOGGER.info "Connecting to Redis compatible DB"
-        if @redis.ping
-          LOGGER.info "Connected to Redis compatible DB via unix domain socket at '#{CONFIG.redis_socket}'" if CONFIG.redis_socket
-          LOGGER.info "Connected to Redis compatible DB via TCP socket at '#{CONFIG.redis_url}'" if CONFIG.redis_url
+        # #ping method is not available in this Redis library
+        # https://github.com/jgaskins/redis/issues/53
+        # if @redis.ping
+        if @redis.run({"PING"}) == "PONG"
+          # LOGGER.info "Connected to Redis compatible DB via unix domain socket at '#{CONFIG.redis_socket}'" if CONFIG.redis_socket
+          LOGGER.info "Connected to Redis compatible DB at '#{CONFIG.redis_url}'" if CONFIG.redis_url
         end
       end
 
       def set(video : Video, expire_time)
-        @redis.set(video.id, video.info.to_json, expire_time)
-        @redis.set(video.id + ":time", video.updated, expire_time)
+        @redis.set(video.id, video.info.to_json, ex: expire_time)
+        @redis.set(video.id + ":time", video.updated.to_s, ex: expire_time)
       end
 
       def del(id : String)

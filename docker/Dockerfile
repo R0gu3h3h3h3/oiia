@@ -22,16 +22,11 @@ COPY ./videojs-dependencies.yml ./videojs-dependencies.yml
 
 RUN crystal spec --warnings all \
     --link-flags "-lxml2 -llzma"
-RUN --mount=type=cache,target=/root/.cache/crystal if [[ "${release}" == 1 ]] ; then \
+RUN --mount=type=cache,target=/root/.cache/crystal \
         crystal build ./src/invidious.cr \
         --release --mcpu=x86-64-v2 \
         --static --warnings all \
-        --link-flags "-lxml2 -llzma"; \
-    else \
-        crystal build ./src/invidious.cr \
-        --static --warnings all \
-        --link-flags "-lxml2 -llzma"; \
-    fi
+        --link-flags "-lxml2 -llzma";
 
 FROM mirror.gcr.io/alpine:3.20
 RUN apk add --no-cache rsvg-convert ttf-opensans tini tzdata

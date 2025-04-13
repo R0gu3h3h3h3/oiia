@@ -20,8 +20,6 @@ COPY ./scripts/ ./scripts/
 COPY ./assets/ ./assets/
 COPY ./videojs-dependencies.yml ./videojs-dependencies.yml
 
-RUN crystal spec --warnings all \
-    --link-flags "-lxml2 -llzma"
 RUN --mount=type=cache,target=/root/.cache/crystal \
         crystal build ./src/invidious.cr \
         --release --mcpu=x86-64-v2 \

@@ -1,4 +1,4 @@
-FROM mirror.gcr.io/crystallang/crystal:1.15.1-alpine AS builder
+FROM mirror.gcr.io/crystallang/crystal:1.16.0-alpine AS builder
 
 RUN apk add --no-cache sqlite-static yaml-static
 

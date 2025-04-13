@@ -1,6 +1,7 @@
 module Invidious::Routes::BeforeAll
   def self.handle(env)
     preferences = Preferences.from_json("{}")
+    host = env.request.headers["Host"]
 
     begin
       if prefs_cookie = env.request.cookies["PREFS"]?
@@ -24,25 +25,16 @@ module Invidious::Routes::BeforeAll
     extra_connect_csp = ""
 
     if CONFIG.invidious_companion.present?
-      CONFIG.invidious_companion.each_with_index do |companion, index|
-        if companion.domain.each_with_index do |domain, domain_index|
-             if domain == env.request.headers["Host"]
-               env.set "current_companion", index
-               env.set "companion_public_url", companion.public_url.to_s
-               env.set "domain_index", domain_index
-               if domain_index == 2
-                 env.set "companion_public_url", companion.i2p_public_url.to_s
-               end
-               break
-             end
-           end
-        end
-        break if env.get?("current_companion")
-      end
+      current_companion_d = host.split(".")[0].scan(/(\d+)$/).last?.try &.[0].to_i
 
-      if env.get?("current_companion").try &.as(Int32) == nil
+      if current_companion_d
+        current_companion_d = current_companion_d - 1
+        env.set "using_domain", true
+        env.set "current_companion", current_companion_d
+        env.set "companion_public_url", CONFIG.invidious_companion[current_companion_d].public_url.to_s
+      else
         if !env.request.cookies[CONFIG.server_id_cookie_name]?
-          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"])
+          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(host)
         end
 
         begin
@@ -53,7 +45,7 @@ module Invidious::Routes::BeforeAll
 
         if current_companion > CONFIG.invidious_companion.size
           current_companion = current_companion % CONFIG.invidious_companion.size
-          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(env.request.headers["Host"], current_companion)
+          env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(host, current_companion)
         end
 
         env.set "current_companion", current_companion

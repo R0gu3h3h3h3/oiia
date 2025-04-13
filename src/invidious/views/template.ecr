@@ -109,16 +109,17 @@
 				<%
 					if CONFIG.invidious_companion.present?
 					current_backend = env.get?("current_companion").try &.as(Int32)
-					domain_index = env.get?("domain_index").try &.as(Int32)
+					domain = env.get?("using_domain")
 					scheme = env.get("scheme")
 					status = BackendInfo.get_status
 				%>
 				<div class="h-box" style="margin-bottom: 10px;">
 					<b>Switch Backend:</b>
-					<% if domain_index && domain_index != 2 %>
+					<% if domain %>
 						<% CONFIG.invidious_companion.each_with_index do | companion, index | %>
-						<% is_current_backend_host = companion.domain[domain_index] == env.request.headers["Host"] %>
-							<a href="<%= scheme %>://<%= companion.domain[domain_index] %><%= env.request.resource %>" style="<%= is_current_backend_host ? "text-decoration-line: underline;" : "" %> display: inline-block;">
+						<% host_backend = env.request.headers["Host"].sub(/([^.]+)(\d+)/, "\\1#{index+1}") %>
+						<% is_current_backend_host = host_backend == env.request.headers["Host"] %>
+							<a href="<%= scheme %>://<%= host_backend %><%= env.request.resource %>" style="<%= is_current_backend_host ? "text-decoration-line: underline;" : "" %> display: inline-block;">
 								Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
 								<span style="color:
 									<% if status[index] == 0 %> #fd4848; <% end %>

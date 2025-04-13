@@ -7,6 +7,7 @@ ARG release
 WORKDIR /invidious
 COPY ./shard.yml ./shard.yml
 COPY ./shard.lock ./shard.lock
+
 RUN shards install --production
 
 COPY ./src/ ./src/

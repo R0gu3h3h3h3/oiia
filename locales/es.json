@@ -519,5 +519,11 @@
 	"footer_contact_url": "Contactar al Administrador",
     "preferences_preload_label": "Precargar datos del vídeo: ",
     "Filipino (auto-generated)": "Filipino (generado automáticamente)",
+    "new_username": "Nuevo nombre de usuario",
+    "change_username": "Cambiar nombre de usuario",
+    "username_required_field": "El nombre de usuario es un campo obligatorio",
+    "username_empty": "El nombre de usuario no puede estar vacío",
+    "username_is_the_same": "Este es tu nombre de usuario, usa otro",
+    "username_taken": "El nombre de usuario ya está en uso, usa otro",
     "backend_unavailable": "El backend seleccionado no está disponible. Has sido redireccionado al siguiente"
 }

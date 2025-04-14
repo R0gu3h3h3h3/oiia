@@ -518,5 +518,6 @@
     "carousel_go_to": "Ir a la diapositiva `x`",
 	"footer_contact_url": "Contactar al Administrador",
     "preferences_preload_label": "Precargar datos del vídeo: ",
-    "Filipino (auto-generated)": "Filipino (generado automáticamente)"
+    "Filipino (auto-generated)": "Filipino (generado automáticamente)",
+    "backend_unavailable": "El backend seleccionado no está disponible. Has sido redireccionado al siguiente"
 }

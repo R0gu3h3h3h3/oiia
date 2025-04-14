@@ -48,6 +48,17 @@ module Invidious::Routes::BeforeAll
           env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(host, current_companion)
         end
 
+        companion_status = BackendInfo.get_status
+
+        if companion_status[current_companion] != 2
+          alive_companion = companion_status.index(2)
+          if alive_companion
+            env.set "companion_switched", true
+            current_companion = alive_companion
+            env.response.cookies[CONFIG.server_id_cookie_name] = Invidious::User::Cookies.server_id(host, current_companion)
+          end
+        end
+
         env.set "current_companion", current_companion
 
         if host.split(".").last == "i2p"

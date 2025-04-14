@@ -112,6 +112,7 @@
 					domain = env.get?("using_domain")
 					scheme = env.get("scheme")
 					status = BackendInfo.get_status
+					companion_switched = env.get?("companion_switched")
 				%>
 				<div class="h-box" style="margin-bottom: 10px;">
 					<b>Switch Backend:</b>
@@ -147,6 +148,12 @@
 						<% end %>
 					<% end %>
 				</div>
+				<% end %>
+
+				<% if companion_switched %>
+					<div class="h-box">
+						<p><%= translate(locale, "backend_unavailable") %></p>
+					</div>
 				<% end %>
 
 				<% if CONFIG.banner %>

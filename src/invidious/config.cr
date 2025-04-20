@@ -52,6 +52,7 @@ struct ConfigPreferences
   property vr_mode : Bool = true
   property show_nick : Bool = true
   property save_player_pos : Bool = false
+  property enable_dearrow : Bool = false
 
   def to_tuple
     {% begin %}
@@ -240,6 +241,8 @@ class Config
   property force_local : Bool = true
 
   property disable_livestreams : Bool = true
+
+  property max_popular_results : Int32 = 40
 
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true

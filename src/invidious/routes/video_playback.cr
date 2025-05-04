@@ -31,7 +31,7 @@ module Invidious::Routes::VideoPlayback
     end
 
     # Sanity check, to avoid being used as an open proxy
-    if !host.matches?(/[\w-]+.googlevideo.com/) && !host.matches?(/[\w-]+.c.youtube.com/)
+    if !host.matches?(/[\w-]+\.(?:googlevideo|c\.youtube)\.com/)
       return error_template(400, "Invalid \"host\" parameter.")
     end
 
@@ -47,7 +47,8 @@ module Invidious::Routes::VideoPlayback
 
     # See: https://github.com/iv-org/invidious/issues/3302
     range_header = env.request.headers["Range"]?
-    if range_header.nil?
+    sq = query_params["sq"]?
+    if range_header.nil? && sq.nil?
       range_for_head = query_params["range"]? || "0-640"
       headers["Range"] = "bytes=#{range_for_head}"
     end

@@ -311,6 +311,9 @@ module Invidious::Routes::Watch
     if CONFIG.disabled?("downloads")
       return error_template(403, "Administrator has disabled this endpoint.")
     end
+    if CONFIG.invidious_companion.present?
+      return error_template(403, "Downloads should be routed through Companion when present")
+    end
 
     title = env.params.body["title"]? || ""
     video_id = env.params.body["id"]? || ""
@@ -346,13 +349,7 @@ module Invidious::Routes::Watch
       env.params.query["title"] = filename
       env.params.query["local"] = "true"
 
-      if (CONFIG.invidious_companion.present?)
-        video = get_video(video_id, env: env)
-        companion_public_url = env.get("companion_public_url").as(String)
-        return env.redirect "#{companion_public_url}/latest_version?#{env.params.query}"
-      else
-        return Invidious::Routes::VideoPlayback.latest_version(env)
-      end
+      return Invidious::Routes::VideoPlayback.latest_version(env)
     else
       return error_template(400, "Invalid label or itag")
     end

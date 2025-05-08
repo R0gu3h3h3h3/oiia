@@ -244,6 +244,8 @@ class Config
 
   property max_popular_results : Int32 = 40
 
+  property disable_video_downloads : Bool = false
+
   {% if flag?(:linux) %}
     property reload_config_automatically : Bool = true
   {% end %}

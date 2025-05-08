@@ -52,28 +52,31 @@ module Invidious::Frontend::WatchPage
 
       # Non-DASH videos (audio+video)
 
-      video_assets.full_videos.each do |option|
-        mimetype = option["mimeType"].as_s.split(";")[0]
+      if !CONFIG.disable_video_downloads
+        video_assets.full_videos.each do |option|
+          mimetype = option["mimeType"].as_s.split(";")[0]
 
-        height = Invidious::Videos::Formats.itag_to_metadata?(option["itag"]).try &.["height"]?
+          height = Invidious::Videos::Formats.itag_to_metadata?(option["itag"]).try &.["height"]?
 
-        value = {"itag": option["itag"], "ext": mimetype.split("/")[1]}.to_json
+          value = {"itag": option["itag"], "ext": mimetype.split("/")[1]}.to_json
 
-        str << "\t\t\t<option value='" << value << "'>"
-        str << (height || "~240") << "p - " << mimetype
-        str << "</option>\n"
+          str << "\t\t\t<option value='" << value << "'>"
+          str << (height || "~240") << "p - " << mimetype
+          str << "</option>\n"
+        end
       end
-
       # DASH video streams
 
-      video_assets.video_streams.each do |option|
-        mimetype = option["mimeType"].as_s.split(";")[0]
+      if !CONFIG.disable_video_downloads
+        video_assets.video_streams.each do |option|
+          mimetype = option["mimeType"].as_s.split(";")[0]
 
-        value = {"itag": option["itag"], "ext": mimetype.split("/")[1]}.to_json
+          value = {"itag": option["itag"], "ext": mimetype.split("/")[1]}.to_json
 
-        str << "\t\t\t<option value='" << value << "'>"
-        str << option["qualityLabel"] << " - " << mimetype << " @ " << option["fps"] << "fps - video only"
-        str << "</option>\n"
+          str << "\t\t\t<option value='" << value << "'>"
+          str << option["qualityLabel"] << " - " << mimetype << " @ " << option["fps"] << "fps - video only"
+          str << "</option>\n"
+        end
       end
 
       # DASH audio streams

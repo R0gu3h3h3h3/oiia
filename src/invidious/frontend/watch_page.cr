@@ -18,14 +18,15 @@ module Invidious::Frontend::WatchPage
     end
   end
 
-  def download_widget(locale : String, video : Video, video_assets : VideoAssets) : String
+  def download_widget(locale : String, video : Video, video_assets : VideoAssets, env : HTTP::Server::Context) : String
     if CONFIG.disabled?("downloads")
       return "<p id=\"download\">#{translate(locale, "Download is disabled")}</p>"
     end
 
     url = "/download"
     if (CONFIG.invidious_companion.present?)
-      invidious_companion = CONFIG.invidious_companion.sample
+      current_companion = env.get("current_companion").as(Int32)
+      invidious_companion = CONFIG.invidious_companion[current_companion]
       url = "#{invidious_companion.public_url}/download?check=#{invidious_companion_encrypt(video.id)}"
     end
 

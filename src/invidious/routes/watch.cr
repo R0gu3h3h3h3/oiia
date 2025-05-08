@@ -312,7 +312,9 @@ module Invidious::Routes::Watch
       return error_template(403, "Administrator has disabled this endpoint.")
     end
     if CONFIG.invidious_companion.present?
-      return error_template(403, "Downloads should be routed through Companion when present")
+      current_companion = env.get("current_companion").as(Int32)
+      invidious_companion = CONFIG.invidious_companion[current_companion]
+      return env.redirect invidious_companion.public_url
     end
 
     title = env.params.body["title"]? || ""

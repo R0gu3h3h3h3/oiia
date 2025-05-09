@@ -1,4 +1,4 @@
-FROM mirror.gcr.io/crystallang/crystal:1.16.0-alpine AS builder
+FROM mirror.gcr.io/crystallang/crystal:1.16.2-alpine AS builder
 
 RUN apk add --no-cache sqlite-static yaml-static
 
@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/crystal \
         --static --warnings all \
         --link-flags "-lxml2 -llzma";
 
-FROM mirror.gcr.io/alpine:3.20
+FROM mirror.gcr.io/alpine:3.21
 RUN apk add --no-cache rsvg-convert ttf-opensans tini tzdata
 WORKDIR /invidious
 RUN addgroup -g 1000 -S invidious && \

@@ -754,7 +754,6 @@ body.dark-theme {
   color: #ccc;
 }
 
-
 .dark-theme .error-card {
   border: 1px solid #5e5e5e;
 }
@@ -912,7 +911,7 @@ h1, h2, h3, h4, h5, p,
 #logo > h1 { text-align: center; }
 
 #footer_buffer {
-  margin-top: 50vh;
+  margin-top: 12.5vh;
 }
 
 @media screen and (max-width: 450px) {

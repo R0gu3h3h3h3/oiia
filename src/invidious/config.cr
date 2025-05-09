@@ -213,12 +213,6 @@ class Config
   # The max resolution the Instance can offer
   property max_dash_resolution : Int32?
 
-  # List of names of the backends
-  property backends : Array(String) = [] of String
-  # Character used to separate the backend number from the description/note
-  # of the backend
-  property backends_delimiter : String = "|"
-
   property pubsub_domain : String = ""
 
   property server_id_cookie_name : String = "COMPANION_ID"

@@ -2,7 +2,7 @@
 
 module Invidious::Routes::BackendSwitcher
   def self.switch(env)
-    referer = get_referer(env)
+    referer = get_referer(env, unroll: false)
     backend_id = env.params.query["backend_id"]?.try &.to_i
 
     if backend_id.nil?

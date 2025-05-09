@@ -133,8 +133,9 @@
 							<% end %>
 						<% end %>
 					<% else %>
+						<% current_page = env.get("current_page") %>
 						<% CONFIG.invidious_companion.each_with_index do | companion, index | %>
-							<a href="/switchbackend?backend_id=<%= index.to_s %>" style="<%= current_backend == index ? "text-decoration-line: underline;" : "" %> display: inline-block;">
+							<a href="/switchbackend?backend_id=<%= index.to_s %>&referer=<%= current_page %>" style="<%= current_backend == index ? "text-decoration-line: underline;" : "" %> display: inline-block;">
 								Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
 								<span style="color:
 									<% if status[index] == 0 %> #fd4848; <% end %>

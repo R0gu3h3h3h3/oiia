@@ -1,155 +1,155 @@
 <%
-	locale = env.get("preferences").as(Preferences).locale
-	dark_mode = env.get("preferences").as(Preferences).dark_mode
+    locale = env.get("preferences").as(Preferences).locale
+    dark_mode = env.get("preferences").as(Preferences).dark_mode
 %>
 <!DOCTYPE html>
 <html lang="<%= locale %>">
 
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<%= yield_content "header" %>
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=<%= ASSET_COMMIT %>">
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=<%= ASSET_COMMIT %>">
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=<%= ASSET_COMMIT %>">
-		<link rel="manifest" href="/site.webmanifest?v=<%= ASSET_COMMIT %>">
-		<link rel="mask-icon" href="/safari-pinned-tab.svg?v=<%= ASSET_COMMIT %>" color="#575757">
-		<meta name="msapplication-TileColor" content="#575757">
-		<meta name="theme-color" content="#575757">
-		<link title="Invidious" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
-		<link rel="stylesheet" href="/css/pure-min.css?v=<%= ASSET_COMMIT %>">
-		<link rel="stylesheet" href="/css/grids-responsive-min.css?v=<%= ASSET_COMMIT %>">
-		<link rel="stylesheet" href="/css/ionicons.min.css?v=<%= ASSET_COMMIT %>">
-		<link rel="stylesheet" href="/css/default.css?v=<%= ASSET_COMMIT %>">
-		<link rel="stylesheet" href="/css/carousel.css?v=<%= ASSET_COMMIT %>">
-		<script src="/<%= JS_PATH %>/_helpers.js?v=<%= ASSET_COMMIT %>"></script>
-	</head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <%= yield_content "header" %>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=<%= ASSET_COMMIT %>">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=<%= ASSET_COMMIT %>">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=<%= ASSET_COMMIT %>">
+        <link rel="manifest" href="/site.webmanifest?v=<%= ASSET_COMMIT %>">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=<%= ASSET_COMMIT %>" color="#575757">
+        <meta name="msapplication-TileColor" content="#575757">
+        <meta name="theme-color" content="#575757">
+        <link title="Invidious" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+        <link rel="stylesheet" href="/css/pure-min.css?v=<%= ASSET_COMMIT %>">
+        <link rel="stylesheet" href="/css/grids-responsive-min.css?v=<%= ASSET_COMMIT %>">
+        <link rel="stylesheet" href="/css/ionicons.min.css?v=<%= ASSET_COMMIT %>">
+        <link rel="stylesheet" href="/css/default.css?v=<%= ASSET_COMMIT %>">
+        <link rel="stylesheet" href="/css/carousel.css?v=<%= ASSET_COMMIT %>">
+        <script src="/<%= JS_PATH %>/_helpers.js?v=<%= ASSET_COMMIT %>"></script>
+    </head>
 
-	<body class="<%= dark_mode.blank? ? "no" : dark_mode %>-theme">
-		<span style="display:none" id="dark_mode_pref"><%= dark_mode %></span>
-		<div class="pure-g">
-			<div class="pure-u-1 pure-u-xl-20-24" id="contents">
-				<div class="pure-g navbar h-box">
-					<% if navbar_search %>
-						<div class="pure-u-1 pure-u-md-4-24">
-							<a href="/" class="index-link pure-menu-heading">
-							Invidious
-							</a>
-						</div>
-						<div class="pure-u-1 pure-u-md-12-24 searchbar">
-							<% autofocus = false %><%= rendered "components/search_box" %>
-						</div>
-					<% end %>
+    <body class="<%= dark_mode.blank? ? "no" : dark_mode %>-theme">
+        <span style="display:none" id="dark_mode_pref"><%= dark_mode %></span>
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-xl-20-24" id="contents">
+                <div class="pure-g navbar h-box">
+                    <% if navbar_search %>
+                        <div class="pure-u-1 pure-u-md-4-24">
+                            <a href="/" class="index-link pure-menu-heading">
+                            Invidious
+                            </a>
+                        </div>
+                        <div class="pure-u-1 pure-u-md-12-24 searchbar">
+                            <% autofocus = false %><%= rendered "components/search_box" %>
+                        </div>
+                    <% end %>
 
-					<div class="pure-u-1 pure-u-md-8-24 user-field">
-						<% if env.get? "user" %>
-							<div class="pure-u-1-4">
-								<a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= translate(locale, "toggle_theme") %>">
-									<% if dark_mode == "dark" %>
-										<i class="icon ion-ios-sunny"></i>
-									<% else %>
-										<i class="icon ion-ios-moon"></i>
-									<% end %>
-								</a>
-							</div>
-							<div class="pure-u-1-4">
-								<a id="notification_ticker" title="<%= translate(locale, "Subscriptions") %>" href="/feed/subscriptions" class="pure-menu-heading">
-									<% notification_count = env.get("user").as(Invidious::User).notifications.size %>
-									<% if CONFIG.enable_user_notifications && notification_count > 0 %>
-										<span id="notification_count"><%= notification_count %></span> <i class="icon ion-ios-notifications"></i>
-									<% else %>
-										<i class="icon ion-ios-notifications-outline"></i>
-									<% end %>
-								</a>
-							</div>
-							<div class="pure-u-1-4">
-								<a title="<%= translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-									<i class="icon ion-ios-cog"></i>
-								</a>
-							</div>
-							<% if env.get("preferences").as(Preferences).show_nick %>
-								<div class="pure-u-1-4" style="overflow: hidden; white-space: nowrap;">
-									<span id="user_name"><%= HTML.escape(env.get("user").as(Invidious::User).email) %></span>
-								</div>
-							<% end %>
-							<div class="pure-u-1-4">
-								<form action="/signout?referer=<%= env.get?("current_page") %>" method="post">
-									<input type="hidden" name="csrf_token" value="<%= HTML.escape(env.get?("csrf_token").try &.as(String) || "") %>">
-									<a class="pure-menu-heading" href="#">
-										<input style="all:unset" type="submit" value="<%= translate(locale, "Log out") %>">
-									</a>
-								</form>
-							</div>
-						<% else %>
-							<div class="pure-u-1-3">
-								<a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= translate(locale, "toggle_theme") %>">
-									<% if dark_mode == "dark" %>
-										<i class="icon ion-ios-sunny"></i>
-									<% else %>
-										<i class="icon ion-ios-moon"></i>
-									<% end %>
-								</a>
-							</div>
-							<div class="pure-u-1-3">
-								<a title="<%= translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-									<i class="icon ion-ios-cog"></i>
-								</a>
-							</div>
-							<% if CONFIG.login_enabled %>
-								<div class="pure-u-1-3">
-									<a href="/login?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
-										<%= translate(locale, "Log in") %>
-									</a>
-								</div>
-							<% end %>
-						<% end %>
-					</div>
-				</div>
+                    <div class="pure-u-1 pure-u-md-8-24 user-field">
+                        <% if env.get? "user" %>
+                            <div class="pure-u-1-4">
+                                <a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= translate(locale, "toggle_theme") %>">
+                                    <% if dark_mode == "dark" %>
+                                        <i class="icon ion-ios-sunny"></i>
+                                    <% else %>
+                                        <i class="icon ion-ios-moon"></i>
+                                    <% end %>
+                                </a>
+                            </div>
+                            <div class="pure-u-1-4">
+                                <a id="notification_ticker" title="<%= translate(locale, "Subscriptions") %>" href="/feed/subscriptions" class="pure-menu-heading">
+                                    <% notification_count = env.get("user").as(Invidious::User).notifications.size %>
+                                    <% if CONFIG.enable_user_notifications && notification_count > 0 %>
+                                        <span id="notification_count"><%= notification_count %></span> <i class="icon ion-ios-notifications"></i>
+                                    <% else %>
+                                        <i class="icon ion-ios-notifications-outline"></i>
+                                    <% end %>
+                                </a>
+                            </div>
+                            <div class="pure-u-1-4">
+                                <a title="<%= translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
+                                    <i class="icon ion-ios-cog"></i>
+                                </a>
+                            </div>
+                            <% if env.get("preferences").as(Preferences).show_nick %>
+                                <div class="pure-u-1-4" style="overflow: hidden; white-space: nowrap;">
+                                    <span id="user_name"><%= HTML.escape(env.get("user").as(Invidious::User).email) %></span>
+                                </div>
+                            <% end %>
+                            <div class="pure-u-1-4">
+                                <form action="/signout?referer=<%= env.get?("current_page") %>" method="post">
+                                    <input type="hidden" name="csrf_token" value="<%= HTML.escape(env.get?("csrf_token").try &.as(String) || "") %>">
+                                    <a class="pure-menu-heading" href="#">
+                                        <input style="all:unset" type="submit" value="<%= translate(locale, "Log out") %>">
+                                    </a>
+                                </form>
+                            </div>
+                        <% else %>
+                            <div class="pure-u-1-3">
+                                <a id="toggle_theme" href="/toggle_theme?referer=<%= env.get?("current_page") %>" class="pure-menu-heading" title="<%= translate(locale, "toggle_theme") %>">
+                                    <% if dark_mode == "dark" %>
+                                        <i class="icon ion-ios-sunny"></i>
+                                    <% else %>
+                                        <i class="icon ion-ios-moon"></i>
+                                    <% end %>
+                                </a>
+                            </div>
+                            <div class="pure-u-1-3">
+                                <a title="<%= translate(locale, "Preferences") %>" href="/preferences?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
+                                    <i class="icon ion-ios-cog"></i>
+                                </a>
+                            </div>
+                            <% if CONFIG.login_enabled %>
+                                <div class="pure-u-1-3">
+                                    <a href="/login?referer=<%= env.get?("current_page") %>" class="pure-menu-heading">
+                                        <%= translate(locale, "Log in") %>
+                                    </a>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                </div>
 
-				<%
-					if CONFIG.invidious_companion.present?
-					current_backend = env.get?("current_companion").try &.as(Int32)
-					domain = env.get?("using_domain")
-					scheme = env.get("scheme")
-					status = BackendInfo.get_status
-					companion_switched = env.get?("companion_switched")
-				%>
-				<div class="h-box" style="margin-bottom: 10px;">
-					<b>Switch Backend:</b>
-					<% if domain %>
-						<% CONFIG.invidious_companion.each_with_index do | companion, index | %>
-						<% host_backend = env.request.headers["Host"].sub(/([^.]+)(\d+)/, "\\1#{index+1}") %>
-						<% is_current_backend_host = host_backend == env.request.headers["Host"] %>
-							<a href="<%= scheme %>://<%= host_backend %><%= env.request.resource %>" style="<%= is_current_backend_host ? "text-decoration-line: underline;" : "" %> display: inline-block;">
-								Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
-								<span style="color:
-									<% if status[index] == 0 %> #fd4848; <% end %>
-									<% if status[index] == 1 %> #d06925; <% end %>
-									<% if status[index] == 2 %> #42ae3c; <% end %>
-								">•</span>
-							</a>
-							<% if !(index == CONFIG.invidious_companion.size-1) %>
-							<span> | </span>
-							<% end %>
-						<% end %>
-					<% else %>
-						<% current_page = env.get("current_page") %>
-						<% CONFIG.invidious_companion.each_with_index do | companion, index | %>
-							<a href="/switchbackend?backend_id=<%= index.to_s %>&referer=<%= current_page %>" style="<%= current_backend == index ? "text-decoration-line: underline;" : "" %> display: inline-block;">
-								Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
-								<span style="color:
-									<% if status[index] == 0 %> #fd4848; <% end %>
-									<% if status[index] == 1 %> #d06925; <% end %>
-									<% if status[index] == 2 %> #42ae3c; <% end %>
-								">•</span>
-							</a>
-							<% if !(index == CONFIG.invidious_companion.size-1) %>
-							<span> | </span>
-							<% end %>
-						<% end %>
-					<% end %>
-				</div>
-				<% end %>
+                <%
+                    if CONFIG.invidious_companion.present?
+                    current_backend = env.get?("current_companion").try &.as(Int32)
+                    domain = env.get?("using_domain")
+                    scheme = env.get("scheme")
+                    status = BackendInfo.get_status
+                    companion_switched = env.get?("companion_switched")
+                %>
+                <div class="h-box" style="margin-bottom: 10px;">
+                    <b>Switch Backend:</b>
+                    <% if domain %>
+                        <% CONFIG.invidious_companion.each_with_index do | companion, index | %>
+                        <% host_backend = env.request.headers["Host"].sub(/([^.]+)(\d+)/, "\\1#{index+1}") %>
+                        <% is_current_backend_host = host_backend == env.request.headers["Host"] %>
+                            <a href="<%= scheme %>://<%= host_backend %><%= env.request.resource %>" style="<%= is_current_backend_host ? "text-decoration-line: underline;" : "" %> display: inline-block;">
+                                Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
+                                <span style="color:
+                                    <% if status[index] == 0 %> #fd4848; <% end %>
+                                    <% if status[index] == 1 %> #d06925; <% end %>
+                                    <% if status[index] == 2 %> #42ae3c; <% end %>
+                                ">•</span>
+                            </a>
+                            <% if !(index == CONFIG.invidious_companion.size-1) %>
+                            <span> | </span>
+                            <% end %>
+                        <% end %>
+                    <% else %>
+                        <% current_page = env.get("current_page") %>
+                        <% CONFIG.invidious_companion.each_with_index do | companion, index | %>
+                            <a href="/switchbackend?backend_id=<%= index.to_s %>&referer=<%= current_page %>" style="<%= current_backend == index ? "text-decoration-line: underline;" : "" %> display: inline-block;">
+                                Backend<%= HTML.escape((index + 1).to_s) %> <%= HTML.escape(companion.note) %>
+                                <span style="color:
+                                    <% if status[index] == 0 %> #fd4848; <% end %>
+                                    <% if status[index] == 1 %> #d06925; <% end %>
+                                    <% if status[index] == 2 %> #42ae3c; <% end %>
+                                ">•</span>
+                            </a>
+                            <% if !(index == CONFIG.invidious_companion.size-1) %>
+                            <span> | </span>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </div>
+                <% end %>
 
                 <% if companion_switched %>
                     <div class="h-box">
@@ -157,11 +157,11 @@
                     </div>
                 <% end %>
 
-				<% if CONFIG.banner %>
-					<div class="h-box">
-						<h3><%= CONFIG.banner %></h3>
-					</div>
-				<% end %>
+                <% if CONFIG.banner %>
+                    <div class="h-box">
+                        <h3><%= CONFIG.banner %></h3>
+                    </div>
+                <% end %>
 
             <%= content %>
         </div>
